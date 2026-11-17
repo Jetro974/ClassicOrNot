@@ -9,14 +9,17 @@ local ADDON, ns = ...
 local L = ns.L
 
 -- Each section: its title, its title in capitals (EllesmereUI's headers),
--- then its places, paired on EllesmereUI's two-column rows. A place's label
--- is L[key], its tooltip L[key .. "_TIP"].
+-- then its places, paired on EllesmereUI's two-column rows (false leaves the
+-- second half of a row empty). A place's label is L[key], its tooltip
+-- L[key .. "_TIP"].
 local SECTIONS = {
     { L.QUESTS, L.QUESTS_UP, "givers", "log", "tracker" },
     { L.RECIPES, L.RECIPES_UP, "window", "trainer" },
-    { L.ITEMS, L.ITEMS_UP, "tooltip", "toys", "mounts", "mountsFilter", "pets", "petsFilter",
-        "appearances", "appearancesFilter" },
+    { L.ITEMS, L.ITEMS_UP, "tooltip", "toys", "missing", false, "mounts", "mountsFilter",
+        "pets", "petsFilter", "appearances", "appearancesFilter" },
 }
+-- Boxes that do nothing while "missing" is off: the game's page greys them.
+local NEEDS_MISSING = { mountsFilter = true, petsFilter = true }
 -- The game's page alone: where the page shows.
 local PANEL = { "EllesmereUI", "", "eui" }
 
@@ -62,7 +65,7 @@ end
 
 -- The setting adds the plugin at once (EllesmereUI takes plugins at any
 -- time). EllesmereUI cannot remove one: turned off, the section stays until
--- the next reload, and /classicornot opens the game's page again.
+-- the next reload (offered), and /classicornot opens the game's page again.
 local registered = false
 ns.Place({
     key = "eui",
@@ -79,7 +82,7 @@ ns.Place({
             } },
         })
     end,
-    off = function() end,
+    off = function() if registered then ns.AskReload() end end,
 })
 
 -------------------------------------------------------------------------------
@@ -90,11 +93,18 @@ local category
 local function AddSection(layout, section)
     layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(section[1]))
     for _, key in ipairs(Places(section)) do
-        local setting = Settings.RegisterProxySetting(category, ADDON .. "_" .. key, Settings.VarType.Boolean,
-            L[key], ns.DEFAULTS[key] and Settings.Default.True or Settings.Default.False,
-            function() return ns.Get(key) end,
-            function(value) ns.Set(key, value) end)
-        Settings.CreateCheckbox(category, setting, L[key .. "_TIP"])
+        if key then
+            local setting = Settings.RegisterProxySetting(category, ADDON .. "_" .. key, Settings.VarType.Boolean,
+                L[key], ns.DEFAULTS[key] and Settings.Default.True or Settings.Default.False,
+                function() return ns.Get(key) end,
+                function(value) ns.Set(key, value) end)
+            local initializer = Settings.CreateCheckbox(category, setting, L[key .. "_TIP"])
+            if NEEDS_MISSING[key] then
+                initializer:AddModifyPredicate(function() return ns.Get("missing") end)
+                -- Despite its name, it watches any setting by its variable.
+                initializer:AddEvaluateStateCVar(ADDON .. "_missing")
+            end
+        end
     end
 end
 

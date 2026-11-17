@@ -130,11 +130,14 @@ local function DropRows(box, keep, field)
 end
 
 -- Both journals rebuild their whole list in one global function, by name.
+-- Forever hides their Filter button unless the player has "missing" ticked
+-- (Core.lua).
 ns.Filter({
     key = "mountsFilter",
     addon = JOURNAL,
     original = ns.ORIGINAL_MOUNTS,
     view = "mountsView",
+    shown = function() return MountJournal.FilterDropdown:IsShown() end,
     menu = function(add)
         Menu.ModifyMenu("MENU_MOUNT_COLLECTION_FILTER", function(_, root) add(root) end)
     end,
@@ -150,6 +153,7 @@ ns.Filter({
     addon = JOURNAL,
     original = ns.ORIGINAL_PETS,
     view = "petsView",
+    shown = function() return PetJournal.FilterDropdown:IsShown() end,
     menu = function(add)
         Menu.ModifyMenu("MENU_PET_COLLECTION_FILTER", function(_, root) add(root) end)
     end,

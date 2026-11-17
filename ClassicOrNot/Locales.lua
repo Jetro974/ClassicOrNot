@@ -31,11 +31,13 @@ local L = {
     mounts = "Mounts: mark",
     mounts_TIP = "Marks new mounts in the mount journal.",
     mountsFilter = "Mounts: filter",
-    mountsFilter_TIP = "Adds All, New in Forever and Classic to the mount journal's Filter menu.",
+    missing = "Journals: show what's missing",
+    missing_TIP = "Also shows, greyed, the mounts and pets you lack, and the journals' Filter button the filters need.",
+    mountsFilter_TIP = "Adds All, New in Forever and Classic to the mount journal's Filter menu, shown with \"Journals: show what's missing\".",
     pets = "Pets: mark",
     pets_TIP = "Marks new pets in the pet journal.",
     petsFilter = "Pets: filter",
-    petsFilter_TIP = "Adds All, New in Forever and Classic to the pet journal's Filter menu.",
+    petsFilter_TIP = "Adds All, New in Forever and Classic to the pet journal's Filter menu, shown with \"Journals: show what's missing\".",
     toys = "Toys: mark",
     toys_TIP = "Marks new toys in the toy box.",
     appearances = "Appearances: mark",
@@ -47,6 +49,9 @@ local L = {
     VIEW_classic = "Classic",
     eui = "In EllesmereUI's panel",
     eui_TIP = "Also shows this page in EllesmereUI's panel; unticked, it leaves the panel at the next /reload.",
+    RELOAD = "This change takes effect at the next reload. Reload the interface now?",
+    RELOAD_NOW = "Reload",
+    LATER = "Later",
 }
 
 if GetLocale() == "frFR" then
@@ -74,11 +79,13 @@ if GetLocale() == "frFR" then
     L.mounts = "Montures : sigle"
     L.mounts_TIP = "Marque les montures nouvelles dans le journal des montures."
     L.mountsFilter = "Montures : filtre"
-    L.mountsFilter_TIP = "Ajoute Toutes, Nouveautés de Forever et Classic au menu Filtre du journal des montures."
+    L.missing = "Journaux : montrer ce qui manque"
+    L.missing_TIP = "Montre aussi, en grisé, les montures et mascottes qui manquent, et le bouton Filtre des journaux dont les filtres ont besoin."
+    L.mountsFilter_TIP = "Ajoute Toutes, Nouveautés de Forever et Classic au menu Filtre du journal des montures, visible avec « Journaux : montrer ce qui manque »."
     L.pets = "Mascottes : sigle"
     L.pets_TIP = "Marque les mascottes nouvelles dans le journal des mascottes."
     L.petsFilter = "Mascottes : filtre"
-    L.petsFilter_TIP = "Ajoute Toutes, Nouveautés de Forever et Classic au menu Filtre du journal des mascottes."
+    L.petsFilter_TIP = "Ajoute Toutes, Nouveautés de Forever et Classic au menu Filtre du journal des mascottes, visible avec « Journaux : montrer ce qui manque »."
     L.toys = "Jouets : sigle"
     L.toys_TIP = "Marque les jouets nouveaux dans le coffre à jouets."
     L.appearances = "Apparences : sigle"
@@ -89,6 +96,9 @@ if GetLocale() == "frFR" then
     L.VIEW_new = "Nouveautés de Forever"
     L.eui = "Dans le panneau d'EllesmereUI"
     L.eui_TIP = "Montre aussi cette page dans le panneau d'EllesmereUI ; décochée, elle en sort au prochain /reload."
+    L.RELOAD = "Ce changement prend effet au prochain rechargement. Recharger l'interface maintenant ?"
+    L.RELOAD_NOW = "Recharger"
+    L.LATER = "Plus tard"
 end
 
 ns.L = L

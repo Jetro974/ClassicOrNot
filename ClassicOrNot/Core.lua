@@ -6,8 +6,9 @@
 --
 --  Marks write nothing of Blizzard's: they are frames of ours, kept in weak
 --  tables keyed by the row they sit on, and Blizzard's lists are only read.
---  A filter the player picks is the one exception: it rebuilds the list a
---  journal shows (see ns.Filter).
+--  Two exceptions, both the player's own choice: a filter rebuilds the list
+--  a journal shows (see ns.Filter), and one box changes a setting of the
+--  game's (see "missing" below).
 -------------------------------------------------------------------------------
 local ADDON, ns = ...
 
@@ -30,15 +31,39 @@ ns.DEFAULTS = {
     eui = false,                        -- options in EllesmereUI's panel too
 }
 
+-- One box, "missing", is the game's own setting: Forever's journals list
+-- only what the player has, without their Filter button, while this CVar is
+-- on. The game keeps it for the whole account, and the journals read it
+-- when they load.
+local ONLY_COLLECTED = "onlyShowCollectedItemsInJournal"
+
 function ns.Get(key)
+    if key == "missing" then return not C_CVar.GetCVarBool(ONLY_COLLECTED) end
     local value = ClassicOrNotDB and ClassicOrNotDB[key]
     if value == nil then return ns.DEFAULTS[key] end
     return value
 end
 
 function ns.Set(key, value)
+    if key == "missing" then
+        C_CVar.SetCVar(ONLY_COLLECTED, value and "0" or "1")
+        if C_AddOns.IsAddOnLoaded("Blizzard_Collections") then ns.AskReload() end
+        return
+    end
     ClassicOrNotDB[key] = value
     ns.ApplyAll()
+end
+
+-- For a change the game only takes at a reload.
+function ns.AskReload()
+    if not StaticPopupDialogs.CLASSICORNOT_RELOAD then
+        StaticPopupDialogs.CLASSICORNOT_RELOAD = {
+            text = ns.L.RELOAD, button1 = ns.L.RELOAD_NOW, button2 = ns.L.LATER,
+            OnAccept = function() ReloadUI() end,
+            timeout = 0, whileDead = true, hideOnEscape = true,
+        }
+    end
+    StaticPopup_Show("CLASSICORNOT_RELOAD")
 end
 
 -------------------------------------------------------------------------------
@@ -222,6 +247,8 @@ end
 local VIEWS = { "all", "new", "classic" }
 
 -- spec = { key, addon, original, view,
+--   shown() (optional): whether the list's Filter button is shown; a list
+--     filtered without it could not be put back by the player,
 --   menu(add): has add(rootDescription) run whenever the Filter menu is built,
 --   hook(after): hooks the list's rebuild, after(...) running at its end,
 --   drop(keep, ...): takes out of the rebuilt list the IDs keep refuses,
@@ -232,7 +259,7 @@ function ns.Filter(spec)
         return ns.IsNew(spec.original, id) == (ns.Get(spec.view) == "new")
     end
     local function filtering()
-        return spec.state and ns.Get(spec.view) ~= "all"
+        return spec.state and ns.Get(spec.view) ~= "all" and (not spec.shown or spec.shown())
     end
     local function isChosen(view)
         return ns.Get(spec.view) == view
