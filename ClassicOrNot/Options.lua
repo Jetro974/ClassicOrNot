@@ -14,7 +14,8 @@ local L = ns.L
 local SECTIONS = {
     { L.QUESTS, L.QUESTS_UP, "givers", "log", "tracker" },
     { L.RECIPES, L.RECIPES_UP, "window", "trainer" },
-    { L.ITEMS, L.ITEMS_UP, "tooltip", "toys", "mounts", "pets", "appearances" },
+    { L.ITEMS, L.ITEMS_UP, "tooltip", "toys", "mounts", "mountsFilter", "pets", "petsFilter",
+        "appearances", "appearancesFilter" },
 }
 -- The game's page alone: where the page shows.
 local PANEL = { "EllesmereUI", nil, "eui" }

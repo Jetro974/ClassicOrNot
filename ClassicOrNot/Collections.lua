@@ -113,3 +113,83 @@ ns.Page({
     mark = MarkLooks,
     now = function() MarkLooks(Items()) end,
 })
+
+-------------------------------------------------------------------------------
+--  Filters (Core.lua, ns.Filter). Mount, pet and appearance rows only show,
+--  summon and preview, nothing protected. The toy box gets none: its buttons
+--  use toys, a protected action.
+-------------------------------------------------------------------------------
+-- A journal list without the rows keep refuses, as one new data provider
+-- (rows taken out one by one would lay the list out again for each).
+local function DropRows(box, keep, field)
+    local rows = {}
+    for _, elementData in box:GetDataProvider():EnumerateEntireRange() do
+        if keep(elementData[field]) then rows[#rows + 1] = elementData end
+    end
+    box:SetDataProvider(CreateDataProvider(rows), ScrollBoxConstants.RetainScrollPosition)
+end
+
+-- Both journals rebuild their whole list in one global function, by name.
+ns.Filter({
+    key = "mountsFilter",
+    addon = JOURNAL,
+    original = ns.ORIGINAL_MOUNTS,
+    view = "mountsView",
+    menu = function(add)
+        Menu.ModifyMenu("MENU_MOUNT_COLLECTION_FILTER", function(_, root) add(root) end)
+    end,
+    hook = function(after) hooksecurefunc("MountJournal_UpdateMountList", after) end,
+    drop = function(keep) DropRows(MountJournal.ScrollBox, keep, "mountID") end,
+    refresh = function()
+        if MountJournal:IsVisible() then MountJournal_UpdateMountList() end
+    end,
+})
+
+ns.Filter({
+    key = "petsFilter",
+    addon = JOURNAL,
+    original = ns.ORIGINAL_PETS,
+    view = "petsView",
+    menu = function(add)
+        Menu.ModifyMenu("MENU_PET_COLLECTION_FILTER", function(_, root) add(root) end)
+    end,
+    hook = function(after) hooksecurefunc("PetJournal_UpdatePetList", after) end,
+    drop = function(keep) DropRows(PetJournal.ScrollBox, keep, "speciesID") end,
+    refresh = function()
+        if PetJournal:IsVisible() then PetJournal_UpdatePetList() end
+    end,
+})
+
+-- The appearances: FilterVisuals builds the list the pages show, before it
+-- is sorted and paged. Forever's appearance Filter menu has no tag: the hook
+-- goes on the method that fills it.
+ns.Filter({
+    key = "appearancesFilter",
+    addon = JOURNAL,
+    original = ns.ORIGINAL_APPEARANCES,
+    view = "appearancesView",
+    menu = function(add)
+        hooksecurefunc(WardrobeCollectionFrame, "InitItemsFilterButtonSetupMenu", function(_, _, root) add(root) end)
+    end,
+    hook = function(after) hooksecurefunc(Items(), "FilterVisuals", after) end,
+    drop = function(keep, items)
+        -- Illusions are not appearances (see MarkLooks).
+        local location = items.transmogLocation
+        if not location or location:IsIllusion() then return end
+        local list, kept = items.filteredVisualsList, 0
+        for i = 1, #list do
+            if keep(list[i].visualID) then
+                kept = kept + 1
+                list[kept] = list[i]
+            end
+        end
+        for i = #list, kept + 1, -1 do list[i] = nil end
+    end,
+    refresh = function()
+        local items = Items()
+        if items:IsVisible() then
+            items:RefreshVisualsList()
+            items:UpdateItems()
+        end
+    end,
+})

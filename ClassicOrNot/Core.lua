@@ -14,14 +14,17 @@ ns.R, ns.G, ns.B = 0.30, 0.65, 1.00
 
 -------------------------------------------------------------------------------
 --  Settings: ClassicOrNotDB[key] (account-wide); an unset key reads its
---  default. Every place is on: marking is all this addon does. The options
---  stay in the game's options unless the player asks for EllesmereUI's panel.
+--  default. Every place is on: marking is all this addon does (a filter on
+--  only adds its choice to the Filter menu, set to All). The options stay in
+--  the game's options unless the player asks for EllesmereUI's panel.
 -------------------------------------------------------------------------------
 ns.DEFAULTS = {
     givers = true, log = true, tracker = true, -- quests
     window = true, trainer = true,      -- recipes
     tooltip = true,                     -- items
     mounts = true, pets = true, toys = true, appearances = true, -- collections
+    mountsFilter = true, petsFilter = true, appearancesFilter = true,
+    mountsView = "all", petsView = "all", appearancesView = "all", -- the filters' choices
     eui = false,                        -- options in EllesmereUI's panel too
 }
 
@@ -205,6 +208,57 @@ function ns.Page(spec)
         spec.now()
     end
     spec.off = function() ns.HideAll(spec.store) end
+    return ns.Place(spec)
+end
+
+-------------------------------------------------------------------------------
+--  Filters: a Blizzard list's Filter menu gets a choice of All, New in
+--  Forever or Classic, kept in ClassicOrNotDB[spec.view]. Unlike a mark, a
+--  filter rewrites the list Blizzard shows, at the player's request: only in
+--  lists whose rows call nothing protected.
+-------------------------------------------------------------------------------
+local VIEWS = { "all", "new", "classic" }
+
+-- spec = { key, addon, original, view,
+--   menu(add): has add(rootDescription) run whenever the Filter menu is built,
+--   hook(after): hooks the list's rebuild, after(...) running at its end,
+--   drop(keep, ...): takes out of the rebuilt list the IDs keep refuses,
+--   refresh(): rebuilds the list if it is shown }
+function ns.Filter(spec)
+    local hooked = false
+    local function keep(id)
+        return ns.IsNew(spec.original, id) == (ns.Get(spec.view) == "new")
+    end
+    local function filtering()
+        return spec.state and ns.Get(spec.view) ~= "all"
+    end
+    local function isChosen(view)
+        return ns.Get(spec.view) == view
+    end
+    local function choose(view)
+        ClassicOrNotDB[spec.view] = view
+        spec.refresh()
+    end
+    local function add(root)
+        if not spec.state then return end
+        root:CreateDivider()
+        root:CreateTitle(ns.L.NAME)
+        for _, view in ipairs(VIEWS) do
+            root:CreateRadio(ns.L["VIEW_" .. view], isChosen, choose, view)
+        end
+    end
+    spec.on = function()
+        if not hooked then
+            hooked = true
+            spec.menu(add)
+            spec.hook(function(...) if filtering() then spec.drop(keep, ...) end end)
+        end
+        if filtering() then spec.refresh() end
+    end
+    -- The whole list again, if it was filtered (spec.state is false by now).
+    spec.off = function()
+        if ns.Get(spec.view) ~= "all" then spec.refresh() end
+    end
     return ns.Place(spec)
 end
 
