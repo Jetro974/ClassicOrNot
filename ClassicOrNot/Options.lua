@@ -9,41 +9,47 @@ local ADDON, ns = ...
 local L = ns.L
 
 -- Each section: its title, its title in capitals (EllesmereUI's headers),
--- then its places. A place's label is L[key], its tooltip L[key .. "_TIP"].
+-- then its places, paired on EllesmereUI's two-column rows. A place's label
+-- is L[key], its tooltip L[key .. "_TIP"].
 local SECTIONS = {
     { L.QUESTS, L.QUESTS_UP, "givers", "log", "tracker" },
     { L.RECIPES, L.RECIPES_UP, "window", "trainer" },
-    { L.ITEMS, L.ITEMS_UP, "tooltip" },
-    { L.COLLECTIONS, L.COLLECTIONS_UP, "mounts", "pets", "toys" },
+    { L.ITEMS, L.ITEMS_UP, "tooltip", "toys", "mounts", "pets" },
 }
 
-local function Shown(key)
-    return key ~= "tracker" or ns.HasTracker()
-end
-
-local function Each(onSection, onPlace)
-    for _, section in ipairs(SECTIONS) do
-        onSection(section)
-        for i = 3, #section do
-            if Shown(section[i]) then onPlace(section[i]) end
-        end
+-- A section's places shown here (the tracker's only with the tracker).
+local function Places(section)
+    local keys = {}
+    for i = 3, #section do
+        if section[i] ~= "tracker" or ns.HasTracker() then keys[#keys + 1] = section[i] end
     end
+    return keys
 end
 
 -------------------------------------------------------------------------------
---  EllesmereUI plugin page
+--  EllesmereUI plugin page: two places per row, as EllesmereUI's own pages
 -------------------------------------------------------------------------------
+local BLANK = { type = "label", text = "" }
+
+local function Toggle(key)
+    if not key then return BLANK end
+    return {
+        type = "toggle", text = L[key], tooltip = L[key .. "_TIP"],
+        getValue = function() return ns.Get(key) end,
+        setValue = function(value) ns.Set(key, value) end,
+    }
+end
+
 local function BuildPluginPage(_, parent, y)
     local W = EllesmereUI.Widgets
     local _, h
-    Each(function(section)
+    for _, section in ipairs(SECTIONS) do
         _, h = W:SectionHeader(parent, section[2], y); y = y - h
-    end, function(key)
-        _, h = W:Toggle(parent, L[key], y,
-            function() return ns.Get(key) end,
-            function(value) ns.Set(key, value) end,
-            L[key .. "_TIP"]); y = y - h
-    end)
+        local keys = Places(section)
+        for i = 1, #keys, 2 do
+            _, h = W:DualRow(parent, y, Toggle(keys[i]), Toggle(keys[i + 1])); y = y - h
+        end
+    end
     return math.abs(y)
 end
 
@@ -55,15 +61,16 @@ local category
 local function BuildSettingsPage()
     local layout
     category, layout = Settings.RegisterVerticalLayoutCategory(L.NAME)
-    Each(function(section)
+    for _, section in ipairs(SECTIONS) do
         layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(section[1]))
-    end, function(key)
-        local setting = Settings.RegisterProxySetting(category, ADDON .. "_" .. key, Settings.VarType.Boolean,
-            L[key], ns.DEFAULTS[key] and Settings.Default.True or Settings.Default.False,
-            function() return ns.Get(key) end,
-            function(value) ns.Set(key, value) end)
-        Settings.CreateCheckbox(category, setting, L[key .. "_TIP"])
-    end)
+        for _, key in ipairs(Places(section)) do
+            local setting = Settings.RegisterProxySetting(category, ADDON .. "_" .. key, Settings.VarType.Boolean,
+                L[key], ns.DEFAULTS[key] and Settings.Default.True or Settings.Default.False,
+                function() return ns.Get(key) end,
+                function(value) ns.Set(key, value) end)
+            Settings.CreateCheckbox(category, setting, L[key .. "_TIP"])
+        end
+    end
     Settings.RegisterAddOnCategory(category)
 end
 

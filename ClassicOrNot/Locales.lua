@@ -14,8 +14,7 @@ local L = {
 
     QUESTS = "Quests", QUESTS_UP = "QUESTS",
     RECIPES = "Recipes", RECIPES_UP = "RECIPES",
-    ITEMS = "Items", ITEMS_UP = "ITEMS",
-    COLLECTIONS = "Collections", COLLECTIONS_UP = "COLLECTIONS",
+    ITEMS = "Items and collections", ITEMS_UP = "ITEMS AND COLLECTIONS",
 
     givers = "At quest givers",
     givers_TIP = "Marks new quests in a quest giver's list and on the quest text before you accept it.",
@@ -45,8 +44,7 @@ if GetLocale() == "frFR" then
 
     L.QUESTS, L.QUESTS_UP = "Quêtes", "QUÊTES"
     L.RECIPES, L.RECIPES_UP = "Recettes", "RECETTES"
-    L.ITEMS, L.ITEMS_UP = "Objets", "OBJETS"
-    L.COLLECTIONS, L.COLLECTIONS_UP = "Collections", "COLLECTIONS"
+    L.ITEMS, L.ITEMS_UP = "Objets et collections", "OBJETS ET COLLECTIONS"
 
     L.givers = "Chez les donneurs de quêtes"
     L.givers_TIP = "Marque les quêtes nouvelles dans la liste d'un donneur de quêtes et sur le texte de la quête avant de l'accepter."

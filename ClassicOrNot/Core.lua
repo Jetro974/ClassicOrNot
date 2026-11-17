@@ -113,10 +113,16 @@ function ns.HideAll(store)
 end
 
 -- Right after the first line of a text (a wrapped text's widest line is
--- usually its first).
-function ns.AfterText(mark, fs)
+-- usually its first). room: how far past the text's box the mark may reach;
+-- a line that leaves it less puts the mark under the text instead.
+function ns.AfterText(mark, fs, room)
+    local x = fs:GetWrappedWidth() + 5
     mark:ClearAllPoints()
-    mark:SetPoint("LEFT", fs, "TOPLEFT", fs:GetWrappedWidth() + 3, -fs:GetLineHeight() / 2)
+    if room and x + mark:GetWidth() > fs:GetWidth() + room then
+        mark:SetPoint("TOPLEFT", fs, "BOTTOMLEFT", 0, -2)
+    else
+        mark:SetPoint("LEFT", fs, "TOPLEFT", x, -fs:GetLineHeight() / 2)
+    end
 end
 
 -- A fixed anchor on a frame of the host's own (or the host itself):
