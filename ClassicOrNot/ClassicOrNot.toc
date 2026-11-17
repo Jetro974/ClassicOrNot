@@ -8,6 +8,7 @@
 ## SavedVariables: ClassicOrNotDB
 ## OptionalDeps: EllesmereUI, EllesmereUIQuestTracker
 ## IconTexture: Interface\Icons\INV_Misc_Spyglass_03
+## X-Curse-Project-ID: 1812310
 ## AddonCompartmentFunc: ClassicOrNot_OnAddonCompartmentClick
 
 Locales.lua
