@@ -18,7 +18,7 @@ local SECTIONS = {
         "appearances", "appearancesFilter" },
 }
 -- The game's page alone: where the page shows.
-local PANEL = { "EllesmereUI", nil, "eui" }
+local PANEL = { "EllesmereUI", "", "eui" }
 
 local function HasPlugins()
     return EllesmereUI ~= nil and EllesmereUI.RegisterPlugin ~= nil

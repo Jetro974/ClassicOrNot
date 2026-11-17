@@ -4,8 +4,10 @@
 --  small blue infinity on a frame of our own), and the switch that turns each
 --  place on and off.
 --
---  Nothing of Blizzard's is written: marks are frames of ours, kept in weak
+--  Marks write nothing of Blizzard's: they are frames of ours, kept in weak
 --  tables keyed by the row they sit on, and Blizzard's lists are only read.
+--  A filter the player picks is the one exception: it rebuilds the list a
+--  journal shows (see ns.Filter).
 -------------------------------------------------------------------------------
 local ADDON, ns = ...
 
