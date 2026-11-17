@@ -52,11 +52,12 @@ ns.List({
 local MarkToy = ns.Marker(ns.ORIGINAL_ITEMS)
 local toyMarks = ns.Store()
 
--- On the icon's top right corner (the button is its icon; the favourite star
--- and "NEW" sit on the left): the same place for every toy, whatever its
--- name's length.
+-- Beside the icon, level with its top edge (the button is its icon, its frame
+-- 3 wider each side): above the name, which is centred on the icon. The same
+-- place for every toy, whatever its name's length.
+local BesideIcon = ns.Anchor("TOPLEFT", "TOPRIGHT", 4, 3)
 local function MarkToyButton(button)
-    MarkToy(toyMarks, button, true, button.itemID, ns.OnIcon, button)
+    MarkToy(toyMarks, button, true, button.itemID, BesideIcon, button)
 end
 
 ns.Page({

@@ -129,9 +129,6 @@ function ns.Anchor(point, relativePoint, x, y)
     return place
 end
 
--- On the top right corner of an icon, over its border.
-ns.OnIcon = ns.Anchor("TOPRIGHT", "TOPRIGHT", 4, 3)
-
 -------------------------------------------------------------------------------
 --  Places: each is a setting with on() and off(). One that lives in a
 --  load-on-demand Blizzard addon waits for it, then applies.

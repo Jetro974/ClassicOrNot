@@ -55,12 +55,13 @@ ns.List({
 --  Profession trainer: on the corner of the service's icon
 -------------------------------------------------------------------------------
 local trainerMarks = ns.Store()
+local OnIcon = ns.Anchor("TOPRIGHT", "TOPRIGHT", 4, 3)
 local function MarkTrainerRow(button, elementData)
     local index = elementData:GetData().skillIndex
     -- Class trainers teach no recipes; categories have no service.
     local info = index and IsTradeskillTrainer() and C_TooltipInfo.GetTrainerService(index)
     if not (info and info.id) then return ns.Unmark(trainerMarks, button) end
-    Mark(trainerMarks, button, true, info.id, ns.OnIcon, button.icon)
+    Mark(trainerMarks, button, true, info.id, OnIcon, button.icon)
 end
 
 ns.List({
