@@ -7,22 +7,17 @@ local _, ns = ...
 
 local L = {
     NAME = "Classic or Not",
-    SUBTITLE = "What's New in Forever",
-    DESCRIPTION = "Marks with a small blue infinity what is not from the original game.",
-    GENERAL = "General",
     NEW_ITEM = "New in Forever",
 
-    QUESTS = "Quests", QUESTS_UP = "QUESTS",
-    PROFESSIONS = "Professions", PROFESSIONS_UP = "PROFESSIONS",
-    ITEMS = "Items", ITEMS_UP = "ITEMS",
-    COLLECTIONS = "Collections", COLLECTIONS_UP = "COLLECTIONS",
+    QUESTS = "Quests",
+    PROFESSIONS = "Professions",
+    ITEMS = "Items",
+    COLLECTIONS = "Collections",
 
     givers = "At quest givers",
     givers_TIP = "Marks new quests in a quest giver's list and on the quest text before you accept it.",
     log = "In the quest log",
     log_TIP = "Marks new quests in the quest log, under each quest's track box.",
-    tracker = "In the quest tracker",
-    tracker_TIP = "Marks new quests on the rows of EllesmereUI's quest tracker.",
     window = "In the profession window",
     window_TIP = "Marks new recipes in the profession window's recipe list.",
     trainer = "At profession trainers",
@@ -46,29 +41,22 @@ local L = {
     VIEW_all = "All",
     VIEW_new = "New in Forever",
     VIEW_classic = "Classic",
-    eui = "Also show in EllesmereUI's panel",
-    eui_TIP = "Also shows this page in EllesmereUI's panel; unticked, it leaves the panel at the next /reload.",
     RELOAD = "This change takes effect at the next reload. Reload the interface now?",
     RELOAD_NOW = "Reload",
     LATER = "Later",
 }
 
 if GetLocale() == "frFR" then
-    L.SUBTITLE = "Les nouveautés de Forever"
-    L.DESCRIPTION = "Marque d'un petit infini bleu ce qui ne vient pas du jeu d'origine."
-    L.GENERAL = "Général"
     L.NEW_ITEM = "Nouveau dans Forever"
 
-    L.QUESTS, L.QUESTS_UP = "Quêtes", "QUÊTES"
-    L.PROFESSIONS, L.PROFESSIONS_UP = "Métiers", "MÉTIERS"
-    L.ITEMS, L.ITEMS_UP = "Objets", "OBJETS"
+    L.QUESTS = "Quêtes"
+    L.PROFESSIONS = "Métiers"
+    L.ITEMS = "Objets"
 
     L.givers = "Chez les donneurs de quêtes"
     L.givers_TIP = "Marque les quêtes nouvelles dans la liste d'un donneur de quêtes et sur le texte de la quête avant de l'accepter."
     L.log = "Dans le journal de quêtes"
     L.log_TIP = "Marque les quêtes nouvelles dans le journal de quêtes, sous la case de suivi de chaque quête."
-    L.tracker = "Dans le suivi des quêtes"
-    L.tracker_TIP = "Marque les quêtes nouvelles sur les lignes du suivi des quêtes d'EllesmereUI."
     L.window = "Dans la fenêtre de métier"
     L.window_TIP = "Marque les recettes nouvelles dans la liste de la fenêtre de métier."
     L.trainer = "Chez les maîtres de métier"
@@ -91,8 +79,6 @@ if GetLocale() == "frFR" then
     L.SHOW_none = "Rien"
     L.VIEW_all = "Toutes"
     L.VIEW_new = "Nouveautés de Forever"
-    L.eui = "Afficher aussi dans le panneau d'EllesmereUI"
-    L.eui_TIP = "Montre aussi cette page dans le panneau d'EllesmereUI ; décochée, elle en sort au prochain /reload."
     L.RELOAD = "Ce changement prend effet au prochain rechargement. Recharger l'interface maintenant ?"
     L.RELOAD_NOW = "Recharger"
     L.LATER = "Plus tard"

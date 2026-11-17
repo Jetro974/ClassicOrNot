@@ -1,16 +1,14 @@
 -------------------------------------------------------------------------------
 --  Quests.lua
 --  New quests, marked at quest givers (their gossip and greeting lists, and
---  the quest text before accepting), in the quest log, and on the rows of
---  EllesmereUI's quest tracker when it is installed. A quest is original when
---  its ID is in the original game's list (Data/Quests.lua).
+--  the quest text before accepting) and in the quest log. A quest is original
+--  when its ID is in the original game's list (Data/Quests.lua).
 --
---  The gossip list's callback and the tracker's row hook are there only while
---  their place is on. The greeting list, the quest text and the quest log keep
+--  The gossip list's callback is there only while its place is on. The greeting list, the quest text and the quest log keep
 --  the hooks they get the first time their place is on (hooks cannot be
 --  removed): each returns at once while its place is off.
 -------------------------------------------------------------------------------
-local ADDON, ns = ...
+local _, ns = ...
 
 local Mark = ns.Marker(ns.ORIGINAL_QUESTS)
 
@@ -98,38 +96,3 @@ ns.Page({
     mark = MarkLog,
     now = MarkLog,
 })
-
--------------------------------------------------------------------------------
---  EllesmereUI's quest tracker (its public row hook, PLUGINS_API.md): the
---  mark fills the slot the tracker keeps right of each title. Without
---  UnregisterQuestTrackerRow, turning the place off hides the marks and the
---  slot stays until the next reload.
--------------------------------------------------------------------------------
-local trackerMarks = ns.Store()
-local InSlot = ns.Anchor("LEFT", "LEFT", 0, 0)
-local trackerRegistered = false
-
-local tracker = ns.Place({ key = "tracker" })
-local function MarkTrackerRow(slot, questID)
-    Mark(trackerMarks, slot, tracker.state, questID, InSlot, slot)
-end
-tracker.on = function()
-    local EUI = EllesmereUI
-    if not (EUI and EUI.RegisterQuestTrackerRow) then return end
-    if not trackerRegistered then
-        trackerRegistered = EUI.RegisterQuestTrackerRow(ADDON, MarkTrackerRow, 18)
-    end
-    EUI.RefreshQuestTrackerRows()
-end
-tracker.off = function()
-    local EUI = EllesmereUI
-    if trackerRegistered and EUI.UnregisterQuestTrackerRow then
-        trackerRegistered = not EUI.UnregisterQuestTrackerRow(ADDON)
-    end
-    ns.HideAll(trackerMarks)
-end
-
--- The tracker's place shows in the options only when the tracker is there.
-function ns.HasTracker()
-    return EllesmereUI ~= nil and EllesmereUI.RegisterQuestTrackerRow ~= nil
-end

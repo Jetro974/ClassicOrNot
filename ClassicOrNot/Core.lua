@@ -18,17 +18,15 @@ ns.R, ns.G, ns.B = 0.30, 0.65, 1.00
 -------------------------------------------------------------------------------
 --  Settings: ClassicOrNotDB[key] (account-wide); an unset key reads its
 --  default. Every place is on: marking is all this addon does (a filter on
---  only adds its choice to the Filter menu, set to All). The options stay in
---  the game's options unless the player asks for EllesmereUI's panel.
+--  only adds its choice to the Filter menu, set to All).
 -------------------------------------------------------------------------------
 ns.DEFAULTS = {
-    givers = true, log = true, tracker = true, -- quests
+    givers = true, log = true,          -- quests
     window = true, trainer = true,      -- recipes
     tooltip = true,                     -- items
     mounts = true, pets = true, toys = true, appearances = true, -- collections
     mountsFilter = true, petsFilter = true, appearancesFilter = true,
     mountsView = "all", petsView = "all", appearancesView = "all", -- the filters' choices
-    eui = false,                        -- options in EllesmereUI's panel too
 }
 
 -- One box, "missing", is the game's own setting: Forever's journals list

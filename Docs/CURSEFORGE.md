@@ -26,10 +26,6 @@ WoW Forever mixes the original game with a lot of new content. **Classic or Not*
 
 Every place can be turned off on its own. Type `/classicornot` or use the addon button on the minimap.
 
-### Works with EllesmereUI
-
-With EllesmereUI installed, Classic or Not marks new quests on EllesmereUI's quest tracker too, and one box adds its options to the EllesmereUI panel as their own section.
-
 ### Accurate, and nothing to update
 
 "Original game" is read from the game's own data, on the last Classic Era client before Season of Discovery. No hand-made lists, no guesses: and since the original game never changes, anything Forever adds later is marked automatically.
