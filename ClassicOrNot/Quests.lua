@@ -91,16 +91,13 @@ local function MarkLog()
     end
 end
 
-local logHooked = false
-local log = ns.Place({ key = "log" })
-log.on = function()
-    if not logHooked then
-        logHooked = true
-        hooksecurefunc("QuestLogQuests_Update", function() if log.state then MarkLog() end end)
-    end
-    MarkLog()
-end
-log.off = function() ns.HideAll(logMarks) end
+ns.Page({
+    key = "log",
+    store = logMarks,
+    hook = function(redrawn) hooksecurefunc("QuestLogQuests_Update", redrawn) end,
+    mark = MarkLog,
+    now = MarkLog,
+})
 
 -------------------------------------------------------------------------------
 --  EllesmereUI's quest tracker (its public row hook, PLUGINS_API.md): the

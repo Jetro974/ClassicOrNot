@@ -2,7 +2,7 @@
 
 **Name:** Classic or Not – What's New in Forever
 
-**Summary:** Marks the quests, recipes, items, mounts, pets and toys that are not from the original game.
+**Summary:** Marks the quests, recipes, items, mounts, pets, toys and appearances that are not from the original game.
 
 **Categories:** Quests & Leveling (main), Tooltip, Collections (if offered), Professions.
 
@@ -21,7 +21,7 @@ WoW Forever mixes the original game with a lot of new content. **Classic or Not*
 - **Quests**: in a quest giver's list, on the quest text before you accept it, and in your quest log.
 - **Recipes**: in your profession window and at profession trainers.
 - **Items**: a *New in Forever* line on the tooltip of every new item, in your bags, at vendors, in chat links. Gear, recipes, mount and pet items, toys: all of them.
-- **Collections**: new mounts in the mount journal, new pets in the pet journal, new toys in the toy box.
+- **Collections**: new mounts in the mount journal, new pets in the pet journal, new toys in the toy box, new appearances in the wardrobe.
 
 Every place can be turned off on its own. Type `/classicornot` or use the addon button on the minimap.
 

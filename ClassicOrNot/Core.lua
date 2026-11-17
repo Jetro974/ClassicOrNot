@@ -20,7 +20,7 @@ ns.DEFAULTS = {
     givers = true, log = true, tracker = true, -- quests
     window = true, trainer = true,      -- recipes
     tooltip = true,                     -- items
-    mounts = true, pets = true, toys = true, -- collections
+    mounts = true, pets = true, toys = true, appearances = true, -- collections
 }
 
 function ns.Get(key)
@@ -188,6 +188,24 @@ function ns.List(spec)
         ns.HideAll(spec.store)
         if spec.onWatch then spec.onWatch(false) end
     end
+    return ns.Place(spec)
+end
+
+-- A Blizzard page redrawn by a function of its own. hook(redrawn) hooks that
+-- function the first time the setting is on (hooks cannot be removed);
+-- redrawn passes its arguments to mark while the setting is on. Turning on
+-- also marks the page as it stands (now); turning off hides its marks.
+-- spec = { key, addon, store, hook, mark, now }
+function ns.Page(spec)
+    local hooked = false
+    spec.on = function()
+        if not hooked then
+            hooked = true
+            spec.hook(function(...) if spec.state then spec.mark(...) end end)
+        end
+        spec.now()
+    end
+    spec.off = function() ns.HideAll(spec.store) end
     return ns.Place(spec)
 end
 

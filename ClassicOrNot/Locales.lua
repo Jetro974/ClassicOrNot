@@ -34,6 +34,8 @@ local L = {
     pets_TIP = "Marks new pets in the pet journal.",
     toys = "In the toy box",
     toys_TIP = "Marks new toys in the toy box.",
+    appearances = "In appearances",
+    appearances_TIP = "Marks new appearances in the collections journal: those no item of the original game had.",
 }
 
 if GetLocale() == "frFR" then
@@ -64,6 +66,8 @@ if GetLocale() == "frFR" then
     L.pets_TIP = "Marque les mascottes nouvelles dans le journal des mascottes."
     L.toys = "Dans le coffre à jouets"
     L.toys_TIP = "Marque les jouets nouveaux dans le coffre à jouets."
+    L.appearances = "Dans les apparences"
+    L.appearances_TIP = "Marque les apparences nouvelles dans le journal des collections : celles qu'aucun objet du jeu d'origine n'avait."
 end
 
 ns.L = L

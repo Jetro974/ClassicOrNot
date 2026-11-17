@@ -14,7 +14,7 @@ local L = ns.L
 local SECTIONS = {
     { L.QUESTS, L.QUESTS_UP, "givers", "log", "tracker" },
     { L.RECIPES, L.RECIPES_UP, "window", "trainer" },
-    { L.ITEMS, L.ITEMS_UP, "tooltip", "toys", "mounts", "pets" },
+    { L.ITEMS, L.ITEMS_UP, "tooltip", "toys", "mounts", "pets", "appearances" },
 }
 
 -- A section's places shown here (the tracker's only with the tracker).

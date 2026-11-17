@@ -1,9 +1,9 @@
 -------------------------------------------------------------------------------
 --  Collections.lua
---  New mounts, pets and toys, marked in the collections journal (a
---  load-on-demand Blizzard addon: each place waits for it). Mounts and pets
---  are original when their ID is in the original game's lists
---  (Data/Collections.lua), toys when their item is (Data/Items.lua).
+--  New mounts, pets, toys and appearances, marked in the collections journal
+--  (a load-on-demand Blizzard addon: each place waits for it). Mounts, pets
+--  and appearances are original when their ID is in the original game's
+--  lists (Data/Collections.lua), toys when their item is (Data/Items.lua).
 -------------------------------------------------------------------------------
 local _, ns = ...
 
@@ -52,7 +52,6 @@ ns.List({
 local MarkToy = ns.Marker(ns.ORIGINAL_ITEMS)
 local toyMarks = ns.Store()
 
-local toys = ns.Place({ key = "toys", addon = JOURNAL })
 -- On the icon's top right corner (the button is its icon; the favourite star
 -- and "NEW" sit on the left): the same place for every toy, whatever its
 -- name's length.
@@ -60,21 +59,52 @@ local function MarkToyButton(button)
     MarkToy(toyMarks, button, true, button.itemID, ns.OnIcon, button)
 end
 
-local hooked = false
-toys.on = function()
-    if not hooked then
-        hooked = true
-        hooksecurefunc("ToySpellButton_UpdateButton", function(button)
-            if toys.state then MarkToyButton(button) end
-        end)
-    end
+ns.Page({
+    key = "toys",
+    addon = JOURNAL,
+    store = toyMarks,
+    hook = function(redrawn) hooksecurefunc("ToySpellButton_UpdateButton", redrawn) end,
+    mark = MarkToyButton,
     -- The page as it stands (each button hides itself past the last toy).
-    local icons = ToyBox.iconsFrame
-    local i = 1
-    while icons["spellButton" .. i] do
-        local button = icons["spellButton" .. i]
-        if button:IsShown() then MarkToyButton(button) end
-        i = i + 1
+    now = function()
+        local icons = ToyBox.iconsFrame
+        local i = 1
+        while icons["spellButton" .. i] do
+            local button = icons["spellButton" .. i]
+            if button:IsShown() then MarkToyButton(button) end
+            i = i + 1
+        end
+    end,
+})
+
+-------------------------------------------------------------------------------
+--  Appearances (the wardrobe): a page of models, all redrawn by the items
+--  frame's UpdateItems, which keeps each model's appearance on it (read
+--  only). The mixin's methods are copied into the frame when it is made: the
+--  hook goes on the frame itself.
+-------------------------------------------------------------------------------
+local MarkLook = ns.Marker(ns.ORIGINAL_APPEARANCES)
+local lookMarks = ns.Store()
+
+local function MarkLooks(items)
+    for _, model in ipairs(items.Models) do
+        local info = model.visualInfo
+        -- "Hide this slot" is shown as an appearance with an ID of its own,
+        -- never worn by an item: not marked.
+        local id = info and not info.isHideVisual and info.visualID
+        MarkLook(lookMarks, model, true, id, RowCorner, model)
     end
 end
-toys.off = function() ns.HideAll(toyMarks) end
+
+local function Items()
+    return WardrobeCollectionFrame.ItemsCollectionFrame
+end
+
+ns.Page({
+    key = "appearances",
+    addon = JOURNAL,
+    store = lookMarks,
+    hook = function(redrawn) hooksecurefunc(Items(), "UpdateItems", redrawn) end,
+    mark = MarkLooks,
+    now = function() MarkLooks(Items()) end,
+})

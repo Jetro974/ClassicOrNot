@@ -6,12 +6,15 @@ Usage (from the project folder):
 Downloads the tables it needs from wago.tools (kept in Tools/.cache, not in
 git) and writes:
     ClassicOrNot/Data/Items.lua        every item of the original game
-    ClassicOrNot/Data/Collections.lua  the original game's mounts and pets
+    ClassicOrNot/Data/Collections.lua  the original game's mounts, pets and
+                                       appearances
 
 "Original game" = the last Classic Era client before Season of Discovery,
 1.14.4.51829 (the same base as the recipe list). It has no mount, pet or toy
 tables, so a Forever mount or pet is original when its spell is in that
 client's spell table, and a toy when its item is in that client's item table.
+An appearance (the wardrobe's look, its ItemAppearance ID) is original when an
+item of that client wears it (its ItemModifiedAppearance table).
 The original game no longer changes, so a new Forever build only matters for
 the mount and pet tables (new entries are marked anyway, being absent).
 
@@ -91,8 +94,9 @@ def main():
     spells = {int(r["ID"]) for r in table("SpellName", ORIGINAL)}
     mounts = [int(r["ID"]) for r in table("Mount", FOREVER) if int(r["SourceSpellID"]) in spells]
     pets = [int(r["ID"]) for r in table("BattlePetSpecies", FOREVER) if int(r["SummonSpellID"]) in spells]
+    looks = [int(r["ItemAppearanceID"]) for r in table("ItemModifiedAppearance", ORIGINAL)]
 
-    ri, rm, rp = ranges(items), ranges(mounts), ranges(pets)
+    ri, rm, rp, rl = ranges(items), ranges(mounts), ranges(pets), ranges(looks)
     write("Items.lua",
           f"--  Every item of the original game, from the Item table of the last Classic\n"
           f"--  Era client before Season of Discovery ({ORIGINAL}), as sorted first,\n"
@@ -104,8 +108,12 @@ def main():
           f"--  entries of Forever's Mount and BattlePetSpecies tables ({FOREVER})\n"
           f"--  whose spell is in the spell table of the last Classic Era client before\n"
           f"--  Season of Discovery ({ORIGINAL}), which has no journal tables\n"
-          f"--  ({len(mounts)} mounts, {len(rm)} ranges; {len(pets)} pets, {len(rp)} ranges).",
-          lua_list("ORIGINAL_MOUNTS", rm) + "\n" + lua_list("ORIGINAL_PETS", rp))
+          f"--  ({len(mounts)} mounts, {len(rm)} ranges; {len(pets)} pets, {len(rp)} ranges).\n"
+          f"--  Then its appearances, by ItemAppearance ID (the wardrobe's visualID):\n"
+          f"--  those its items wear in that client's ItemModifiedAppearance table\n"
+          f"--  ({len(set(looks))} appearances, {len(rl)} ranges).",
+          lua_list("ORIGINAL_MOUNTS", rm) + "\n" + lua_list("ORIGINAL_PETS", rp)
+          + "\n" + lua_list("ORIGINAL_APPEARANCES", rl))
 
 
 main()

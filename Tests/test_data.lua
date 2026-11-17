@@ -27,7 +27,7 @@ local function check(ok, what)
 end
 
 -- Every list: pairs, sorted, first <= last, no overlap.
-for _, name in ipairs({ "ORIGINAL_QUESTS", "ORIGINAL_RECIPES", "ORIGINAL_ITEMS", "ORIGINAL_MOUNTS", "ORIGINAL_PETS" }) do
+for _, name in ipairs({ "ORIGINAL_QUESTS", "ORIGINAL_RECIPES", "ORIGINAL_ITEMS", "ORIGINAL_MOUNTS", "ORIGINAL_PETS", "ORIGINAL_APPEARANCES" }) do
     local list = ns[name]
     check(type(list) == "table" and #list > 0 and #list % 2 == 0, name .. " is a list of pairs")
     for i = 1, #list, 2 do
@@ -45,6 +45,8 @@ local cases = {
     { "ORIGINAL_PETS", 162, true }, { "ORIGINAL_PETS", 5159, true }, -- Sinister Squashling, the new Panda
     { "ORIGINAL_ITEMS", 17716, false }, { "ORIGINAL_ITEMS", 18660, false }, -- Snowmaster 9000, World Enlarger
     { "ORIGINAL_ITEMS", 269900, true }, { "ORIGINAL_ITEMS", 288185, true }, -- Centaur Banner, Adventurer's Tent
+    { "ORIGINAL_APPEARANCES", 57187, false }, { "ORIGINAL_APPEARANCES", 68530, false }, -- items 2101, Thunderfury 19019
+    { "ORIGINAL_APPEARANCES", 8829, true }, -- item 34085, not in the original game
 }
 for _, c in ipairs(cases) do
     check(ns.IsNew(ns[c[1]], c[2]) == c[3], c[1] .. " " .. c[2] .. (c[3] and " is new" or " is original"))
