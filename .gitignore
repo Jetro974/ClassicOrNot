@@ -1,0 +1,4 @@
+luac.out
+*.out
+Tools/.cache/
+__pycache__/

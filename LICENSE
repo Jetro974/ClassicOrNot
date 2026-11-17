@@ -1,0 +1,30 @@
+Classic or Not
+Copyright (c) 2026 Jetro974. All rights reserved.
+
+The source code is published so that it can be read, checked and improved.
+
+You may:
+- download, install and use the addon to play World of Warcraft;
+- read the source code;
+- fork this repository on GitHub to prepare a contribution to it (a pull
+  request).
+
+You may not, without the copyright holder's prior written permission:
+- copy, reuse or adapt any part of the code or of its data in another addon
+  or project;
+- redistribute the addon or a modified version of it, including uploading it
+  to any addon site;
+- sublicense or sell it.
+
+Contributions: when you submit a contribution (a pull request, a patch, code
+in an issue), you keep the copyright of your contribution and grant the
+copyright holder a perpetual, worldwide, irrevocable, royalty-free license to
+use, modify, distribute and relicense it as part of this project.
+
+The lists in ClassicOrNot/Data are derived from World of Warcraft's game data.
+World of Warcraft is a trademark of Blizzard Entertainment, Inc. This project
+is not affiliated with or endorsed by Blizzard Entertainment.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED. IN NO EVENT SHALL THE COPYRIGHT HOLDER BE LIABLE FOR ANY CLAIM,
+DAMAGES OR OTHER LIABILITY ARISING FROM THE SOFTWARE OR ITS USE.

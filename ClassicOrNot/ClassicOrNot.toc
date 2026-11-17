@@ -1,0 +1,25 @@
+## Interface: 16001
+## AllowLoadGameType: camelot
+## Title: Classic or Not
+## Notes: What's New in Forever: marks the quests, recipes, items, mounts, pets and toys that are not from the original game.
+## Notes-frFR: Les nouveautés de Forever : marque les quêtes, recettes, objets, montures, mascottes et jouets qui ne viennent pas du jeu d'origine.
+## Author: Jetro974
+## Version: 0.1.0
+## SavedVariables: ClassicOrNotDB
+## OptionalDeps: EllesmereUI, EllesmereUIQuestTracker
+## IconTexture: Interface\Icons\INV_Misc_Spyglass_03
+## AddonCompartmentFunc: ClassicOrNot_OnAddonCompartmentClick
+
+Locales.lua
+Core.lua
+# The original game's lists (fixed: the original game no longer changes).
+Data\Quests.lua
+Data\Recipes.lua
+Data\Items.lua
+Data\Collections.lua
+# The places.
+Quests.lua
+Recipes.lua
+Items.lua
+Collections.lua
+Options.lua
