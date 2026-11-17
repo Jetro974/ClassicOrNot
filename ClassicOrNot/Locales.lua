@@ -13,8 +13,9 @@ local L = {
     NEW_ITEM = "New in Forever",
 
     QUESTS = "Quests", QUESTS_UP = "QUESTS",
-    RECIPES = "Recipes", RECIPES_UP = "RECIPES",
-    ITEMS = "Items and collections", ITEMS_UP = "ITEMS AND COLLECTIONS",
+    PROFESSIONS = "Professions", PROFESSIONS_UP = "PROFESSIONS",
+    ITEMS = "Items", ITEMS_UP = "ITEMS",
+    COLLECTIONS = "Collections", COLLECTIONS_UP = "COLLECTIONS",
 
     givers = "At quest givers",
     givers_TIP = "Marks new quests in a quest giver's list and on the quest text before you accept it.",
@@ -28,26 +29,24 @@ local L = {
     trainer_TIP = "Marks new recipes in a profession trainer's list.",
     tooltip = "In item tooltips",
     tooltip_TIP = "Adds a line to the tooltip of every item that is not from the original game: gear, recipes, mounts, pets and toys.",
-    mounts = "Mounts: mark",
-    mounts_TIP = "Marks new mounts in the mount journal.",
-    mountsFilter = "Mounts: filter",
-    missing = "Journals: show what's missing",
-    missing_TIP = "Also shows, greyed, the mounts and pets you lack, and the journals' Filter button the filters need.",
-    mountsFilter_TIP = "Adds All, New in Forever and Classic to the mount journal's Filter menu, shown with \"Journals: show what's missing\".",
-    pets = "Pets: mark",
-    pets_TIP = "Marks new pets in the pet journal.",
-    petsFilter = "Pets: filter",
-    petsFilter_TIP = "Adds All, New in Forever and Classic to the pet journal's Filter menu, shown with \"Journals: show what's missing\".",
+    missing = "Show what's missing",
+    missing_TIP = "Also shows, greyed, the mounts and pets you lack, and the journals' Filter button the mount and pet filters need.",
+    mounts = "Mounts",
+    mounts_TIP = "In the mount journal: the mark on new mounts, and All, New in Forever and Classic in the Filter menu, which needs \"Show what's missing\".",
+    pets = "Pets",
+    pets_TIP = "In the pet journal: the mark on new pets, and All, New in Forever and Classic in the Filter menu, which needs \"Show what's missing\".",
+    appearances = "Appearances",
+    appearances_TIP = "In the collections journal's appearances: the mark on new ones (those no item of the original game had), and All, New in Forever and Classic in the Filter menu.",
     toys = "Toys: mark",
     toys_TIP = "Marks new toys in the toy box.",
-    appearances = "Appearances: mark",
-    appearances_TIP = "Marks new appearances in the collections journal: those no item of the original game had.",
-    appearancesFilter = "Appearances: filter",
-    appearancesFilter_TIP = "Adds All, New in Forever and Classic to the appearances' Filter menu.",
+    SHOW_both = "Mark and filter",
+    SHOW_mark = "Mark",
+    SHOW_filter = "Filter",
+    SHOW_none = "None",
     VIEW_all = "All",
     VIEW_new = "New in Forever",
     VIEW_classic = "Classic",
-    eui = "In EllesmereUI's panel",
+    eui = "Also show in EllesmereUI's panel",
     eui_TIP = "Also shows this page in EllesmereUI's panel; unticked, it leaves the panel at the next /reload.",
     RELOAD = "This change takes effect at the next reload. Reload the interface now?",
     RELOAD_NOW = "Reload",
@@ -61,8 +60,8 @@ if GetLocale() == "frFR" then
     L.NEW_ITEM = "Nouveau dans Forever"
 
     L.QUESTS, L.QUESTS_UP = "Quêtes", "QUÊTES"
-    L.RECIPES, L.RECIPES_UP = "Recettes", "RECETTES"
-    L.ITEMS, L.ITEMS_UP = "Objets et collections", "OBJETS ET COLLECTIONS"
+    L.PROFESSIONS, L.PROFESSIONS_UP = "Métiers", "MÉTIERS"
+    L.ITEMS, L.ITEMS_UP = "Objets", "OBJETS"
 
     L.givers = "Chez les donneurs de quêtes"
     L.givers_TIP = "Marque les quêtes nouvelles dans la liste d'un donneur de quêtes et sur le texte de la quête avant de l'accepter."
@@ -76,25 +75,23 @@ if GetLocale() == "frFR" then
     L.trainer_TIP = "Marque les recettes nouvelles dans la liste d'un maître de métier."
     L.tooltip = "Dans l'infobulle des objets"
     L.tooltip_TIP = "Ajoute une ligne à l'infobulle de chaque objet qui ne vient pas du jeu d'origine : équipement, recettes, montures, mascottes et jouets."
-    L.mounts = "Montures : sigle"
-    L.mounts_TIP = "Marque les montures nouvelles dans le journal des montures."
-    L.mountsFilter = "Montures : filtre"
-    L.missing = "Journaux : montrer ce qui manque"
-    L.missing_TIP = "Montre aussi, en grisé, les montures et mascottes qui manquent, et le bouton Filtre des journaux dont les filtres ont besoin."
-    L.mountsFilter_TIP = "Ajoute Toutes, Nouveautés de Forever et Classic au menu Filtre du journal des montures, visible avec « Journaux : montrer ce qui manque »."
-    L.pets = "Mascottes : sigle"
-    L.pets_TIP = "Marque les mascottes nouvelles dans le journal des mascottes."
-    L.petsFilter = "Mascottes : filtre"
-    L.petsFilter_TIP = "Ajoute Toutes, Nouveautés de Forever et Classic au menu Filtre du journal des mascottes, visible avec « Journaux : montrer ce qui manque »."
+    L.missing = "Montrer ce qui manque"
+    L.missing_TIP = "Montre aussi, en grisé, les montures et mascottes qui manquent, et le bouton Filtre des journaux dont les filtres des montures et des mascottes ont besoin."
+    L.mounts = "Montures"
+    L.mounts_TIP = "Dans le journal des montures : le sigle sur les nouvelles, et Toutes, Nouveautés de Forever et Classic dans le menu Filtre, qui demande « Montrer ce qui manque »."
+    L.pets = "Mascottes"
+    L.pets_TIP = "Dans le journal des mascottes : le sigle sur les nouvelles, et Toutes, Nouveautés de Forever et Classic dans le menu Filtre, qui demande « Montrer ce qui manque »."
+    L.appearances = "Apparences"
+    L.appearances_TIP = "Dans les apparences du journal des collections : le sigle sur les nouvelles (celles qu'aucun objet du jeu d'origine n'avait), et Toutes, Nouveautés de Forever et Classic dans le menu Filtre."
     L.toys = "Jouets : sigle"
     L.toys_TIP = "Marque les jouets nouveaux dans le coffre à jouets."
-    L.appearances = "Apparences : sigle"
-    L.appearances_TIP = "Marque les apparences nouvelles dans le journal des collections : celles qu'aucun objet du jeu d'origine n'avait."
-    L.appearancesFilter = "Apparences : filtre"
-    L.appearancesFilter_TIP = "Ajoute Toutes, Nouveautés de Forever et Classic au menu Filtre des apparences."
+    L.SHOW_both = "Sigle et filtre"
+    L.SHOW_mark = "Sigle"
+    L.SHOW_filter = "Filtre"
+    L.SHOW_none = "Rien"
     L.VIEW_all = "Toutes"
     L.VIEW_new = "Nouveautés de Forever"
-    L.eui = "Dans le panneau d'EllesmereUI"
+    L.eui = "Afficher aussi dans le panneau d'EllesmereUI"
     L.eui_TIP = "Montre aussi cette page dans le panneau d'EllesmereUI ; décochée, elle en sort au prochain /reload."
     L.RELOAD = "Ce changement prend effet au prochain rechargement. Recharger l'interface maintenant ?"
     L.RELOAD_NOW = "Recharger"
