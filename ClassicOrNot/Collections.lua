@@ -87,11 +87,15 @@ local MarkLook = ns.Marker(ns.ORIGINAL_APPEARANCES)
 local lookMarks = ns.Store()
 
 local function MarkLooks(items)
+    -- The same models show weapon illusions, whose IDs are enchant visuals,
+    -- not appearances: not marked. No slot is chosen before the first show.
+    local location = items.transmogLocation
+    local looks = location and not location:IsIllusion()
     for _, model in ipairs(items.Models) do
         local info = model.visualInfo
         -- "Hide this slot" is shown as an appearance with an ID of its own,
         -- never worn by an item: not marked.
-        local id = info and not info.isHideVisual and info.visualID
+        local id = looks and info and not info.isHideVisual and info.visualID
         MarkLook(lookMarks, model, true, id, RowCorner, model)
     end
 end
