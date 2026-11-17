@@ -35,7 +35,7 @@ With EllesmereUI installed, Classic or Not marks new quests on EllesmereUI's que
 
 ### Light
 
-Nothing runs for a place you turn off, nothing polls, and Blizzard's frames are never modified: the marks are drawn on frames of the addon's own.
+Nothing runs for a place you turn off, and nothing polls. The marks are drawn on frames of the addon's own; only a filter you pick changes what a list shows.
 
 ### Feedback
 
