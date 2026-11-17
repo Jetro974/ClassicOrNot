@@ -1,9 +1,9 @@
 -------------------------------------------------------------------------------
 --  Options.lua
---  One page of switches, one per place. With EllesmereUI installed the page is
---  an EllesmereUI plugin (its own section in the EllesmereUI panel,
---  PLUGINS_API.md); without it, a page in the game's options (Options >
---  AddOns). /classicornot and the addon compartment open whichever it is.
+--  One page of switches, one per place, in the game's options (Options >
+--  AddOns). With EllesmereUI installed, the player can also have the page in
+--  the EllesmereUI panel, as a plugin (its own section, PLUGINS_API.md);
+--  /classicornot and the addon compartment then open that one.
 -------------------------------------------------------------------------------
 local ADDON, ns = ...
 local L = ns.L
@@ -16,6 +16,12 @@ local SECTIONS = {
     { L.RECIPES, L.RECIPES_UP, "window", "trainer" },
     { L.ITEMS, L.ITEMS_UP, "tooltip", "toys", "mounts", "pets", "appearances" },
 }
+-- The game's page alone: where the page shows.
+local PANEL = { "EllesmereUI", nil, "eui" }
+
+local function HasPlugins()
+    return EllesmereUI ~= nil and EllesmereUI.RegisterPlugin ~= nil
+end
 
 -- A section's places shown here (the tracker's only with the tracker).
 local function Places(section)
@@ -53,36 +59,15 @@ local function BuildPluginPage(_, parent, y)
     return math.abs(y)
 end
 
--------------------------------------------------------------------------------
---  Game options page
--------------------------------------------------------------------------------
-local category
-
-local function BuildSettingsPage()
-    local layout
-    category, layout = Settings.RegisterVerticalLayoutCategory(L.NAME)
-    for _, section in ipairs(SECTIONS) do
-        layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(section[1]))
-        for _, key in ipairs(Places(section)) do
-            local setting = Settings.RegisterProxySetting(category, ADDON .. "_" .. key, Settings.VarType.Boolean,
-                L[key], ns.DEFAULTS[key] and Settings.Default.True or Settings.Default.False,
-                function() return ns.Get(key) end,
-                function(value) ns.Set(key, value) end)
-            Settings.CreateCheckbox(category, setting, L[key .. "_TIP"])
-        end
-    end
-    Settings.RegisterAddOnCategory(category)
-end
-
--------------------------------------------------------------------------------
---  At login (Core.lua)
--------------------------------------------------------------------------------
-local plugin = false
-
-function ns.BuildOptions()
-    local EUI = EllesmereUI
-    if EUI and EUI.RegisterPlugin then
-        plugin = EUI.RegisterPlugin(ADDON, {
+-- The setting adds the plugin at once (EllesmereUI takes plugins at any
+-- time). EllesmereUI cannot remove one: turned off, the section stays until
+-- the next reload, and /classicornot opens the game's page again.
+local registered = false
+ns.Place({
+    key = "eui",
+    on = function()
+        if registered or not HasPlugins() then return end
+        registered = EllesmereUI.RegisterPlugin(ADDON, {
             label = L.NAME,
             modules = { {
                 key = "General",
@@ -92,12 +77,37 @@ function ns.BuildOptions()
                 buildPage = BuildPluginPage,
             } },
         })
+    end,
+    off = function() end,
+})
+
+-------------------------------------------------------------------------------
+--  Game options page (always there)
+-------------------------------------------------------------------------------
+local category
+
+local function AddSection(layout, section)
+    layout:AddInitializer(CreateSettingsListSectionHeaderInitializer(section[1]))
+    for _, key in ipairs(Places(section)) do
+        local setting = Settings.RegisterProxySetting(category, ADDON .. "_" .. key, Settings.VarType.Boolean,
+            L[key], ns.DEFAULTS[key] and Settings.Default.True or Settings.Default.False,
+            function() return ns.Get(key) end,
+            function(value) ns.Set(key, value) end)
+        Settings.CreateCheckbox(category, setting, L[key .. "_TIP"])
     end
-    if not plugin then BuildSettingsPage() end
+end
+
+-- At login (Core.lua), before the places apply.
+function ns.BuildOptions()
+    local layout
+    category, layout = Settings.RegisterVerticalLayoutCategory(L.NAME)
+    for _, section in ipairs(SECTIONS) do AddSection(layout, section) end
+    if HasPlugins() then AddSection(layout, PANEL) end
+    Settings.RegisterAddOnCategory(category)
 end
 
 function ns.OpenOptions()
-    if plugin then
+    if registered and ns.Get("eui") then
         EllesmereUI.OpenPlugin(ADDON)
     else
         Settings.OpenToCategory(category:GetID())

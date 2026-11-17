@@ -36,6 +36,8 @@ local L = {
     toys_TIP = "Marks new toys in the toy box.",
     appearances = "In appearances",
     appearances_TIP = "Marks new appearances in the collections journal: those no item of the original game had.",
+    eui = "In EllesmereUI's panel",
+    eui_TIP = "Also shows this page in EllesmereUI's panel; unticked, it leaves the panel at the next /reload.",
 }
 
 if GetLocale() == "frFR" then
@@ -68,6 +70,8 @@ if GetLocale() == "frFR" then
     L.toys_TIP = "Marque les jouets nouveaux dans le coffre à jouets."
     L.appearances = "Dans les apparences"
     L.appearances_TIP = "Marque les apparences nouvelles dans le journal des collections : celles qu'aucun objet du jeu d'origine n'avait."
+    L.eui = "Dans le panneau d'EllesmereUI"
+    L.eui_TIP = "Montre aussi cette page dans le panneau d'EllesmereUI ; décochée, elle en sort au prochain /reload."
 end
 
 ns.L = L

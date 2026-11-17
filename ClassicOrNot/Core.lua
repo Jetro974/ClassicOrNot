@@ -14,13 +14,15 @@ ns.R, ns.G, ns.B = 0.30, 0.65, 1.00
 
 -------------------------------------------------------------------------------
 --  Settings: ClassicOrNotDB[key] (account-wide); an unset key reads its
---  default. Every place is on: marking is all this addon does.
+--  default. Every place is on: marking is all this addon does. The options
+--  stay in the game's options unless the player asks for EllesmereUI's panel.
 -------------------------------------------------------------------------------
 ns.DEFAULTS = {
     givers = true, log = true, tracker = true, -- quests
     window = true, trainer = true,      -- recipes
     tooltip = true,                     -- items
     mounts = true, pets = true, toys = true, appearances = true, -- collections
+    eui = false,                        -- options in EllesmereUI's panel too
 }
 
 function ns.Get(key)

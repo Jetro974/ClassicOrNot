@@ -27,7 +27,7 @@ Every place can be turned off on its own. Type `/classicornot` or use the addon 
 
 ### Works with EllesmereUI
 
-With EllesmereUI installed, Classic or Not settles into the EllesmereUI panel as its own section, and marks new quests on EllesmereUI's quest tracker too.
+With EllesmereUI installed, Classic or Not marks new quests on EllesmereUI's quest tracker too, and one box adds its options to the EllesmereUI panel as their own section.
 
 ### Accurate, and nothing to update
 

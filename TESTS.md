@@ -14,8 +14,8 @@ Installer : `powershell -ExecutionPolicy Bypass -File C:\Dev\Addons\ClassicOrNot
 9. Ouvrir le journal des collections la première fois APRÈS la connexion (addon chargé à la demande) : les marques sont là dès la première ouverture.
 
 **Avec EllesmereUI** :
-10. Le panneau EUI a une section « Classic or Not » en bas, ligne « What's New in Forever » (en français : « Les nouveautés de Forever »), une page « Général » avec les 3 titres en capitales et les cases deux par ligne, comme les pages d'EUI, plus « Dans le suivi des quêtes ». Aucune fenêtre « addon à mettre à jour » d'EUI. `/classicornot` ouvre cette page. La recherche d'EUI trouve « montures ».
+10. Par défaut, rien dans le panneau EUI ; Options > AddOns > « Classic or Not » a un 4e titre « EllesmereUI » et la case « Dans le panneau d'EllesmereUI », décochée. La cocher : le panneau EUI a une section « Classic or Not » en bas (sans /reload), ligne « What's New in Forever » (en français : « Les nouveautés de Forever »), une page « Général » avec les 3 titres en capitales et les cases deux par ligne, comme les pages d'EUI, plus « Dans le suivi des quêtes ». Aucune fenêtre « addon à mettre à jour » d'EUI. `/classicornot` ouvre cette page. La recherche d'EUI trouve « montures ». Décocher : `/classicornot` rouvre la page du jeu ; la section d'EUI part au /reload suivant.
 11. Suivi de quêtes personnalisé d'EUI : l'infini à droite du titre des quêtes nouvelles. Décocher « Dans le suivi des quêtes » : les marques partent (la place gardée à droite du titre reste jusqu'au prochain /reload, normal).
-12. Pas de page en double dans Options > AddOns.
+12. Une seule page « Classic or Not » dans Options > AddOns, case cochée ou non.
 
 Noté : ______ (date, build, ce qui ne va pas).
