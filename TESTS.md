@@ -9,7 +9,7 @@ Installer : `powershell -ExecutionPolicy Bypass -File C:\Dev\Addons\ClassicOrNot
 4. **Objets** : infobulle d'un objet nouveau (dans les sacs, chez un marchand, un lien dans le chat) : ligne « ∞ Nouveau dans Forever » ; un objet d'origine (Agrandisseur de monde 18660, Snowmaster 9000 17716) : rien. En combat : pas d'erreur.
 5. **Montures** : journal des montures : l'infini en haut à droite des Galestrider, du Venomhide Ravasaur ; rien sur le Cheval bai (Brown Horse) ni la Tortue de monte. Défiler, filtrer : les marques suivent les bonnes lignes.
 6. **Mascottes** : journal des mascottes : marque sur les nouvelles (Sinister Squashling, Lanternes, le nouveau Panda), rien sur l'Écureuil mécanique ni les chats. Défiler, filtrer.
-7. **Jouets** : coffre à jouets : marque juste après le nom, sans toucher le texte (après la première ligne d'un nom sur deux lignes ; sous le nom si la première ligne est trop longue pour laisser la place avant le jouet voisin) sur la Bannière centaure, la Tente d'aventurier ; rien sur l'Agrandisseur de monde ; changer de page : les marques suivent. Le clic sur un jouet marche toujours (aucune erreur « action bloquée »).
+7. **Jouets** : coffre à jouets : marque en haut à droite de l'icône, à la même place pour tous les jouets quelle que soit la longueur du nom, sans cacher l'étoile des favoris ni « NOUVEAU » (à gauche), sur la Bannière centaure, la Tente d'aventurier ; rien sur l'Agrandisseur de monde ; changer de page : les marques suivent. Le clic sur un jouet marche toujours (aucune erreur « action bloquée »).
 8. Ouvrir le journal des collections la première fois APRÈS la connexion (addon chargé à la demande) : les marques sont là dès la première ouverture.
 
 **Avec EllesmereUI** :

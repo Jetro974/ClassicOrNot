@@ -53,11 +53,11 @@ local MarkToy = ns.Marker(ns.ORIGINAL_ITEMS)
 local toyMarks = ns.Store()
 
 local toys = ns.Place({ key = "toys", addon = JOURNAL })
--- After the toy's name (135 wide, up to three lines, right of its icon). The
--- next toy's icon starts 14 past the name's box: a first line too wide to
--- leave the mark that much room puts it under the name.
+-- On the icon's top right corner (the button is its icon; the favourite star
+-- and "NEW" sit on the left): the same place for every toy, whatever its
+-- name's length.
 local function MarkToyButton(button)
-    MarkToy(toyMarks, button, true, button.itemID, ns.AfterText, button.name, 10)
+    MarkToy(toyMarks, button, true, button.itemID, ns.OnIcon, button)
 end
 
 local hooked = false

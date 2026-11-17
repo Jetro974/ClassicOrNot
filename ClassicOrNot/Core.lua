@@ -113,16 +113,10 @@ function ns.HideAll(store)
 end
 
 -- Right after the first line of a text (a wrapped text's widest line is
--- usually its first). room: how far past the text's box the mark may reach;
--- a line that leaves it less puts the mark under the text instead.
-function ns.AfterText(mark, fs, room)
-    local x = fs:GetWrappedWidth() + 5
+-- usually its first).
+function ns.AfterText(mark, fs)
     mark:ClearAllPoints()
-    if room and x + mark:GetWidth() > fs:GetWidth() + room then
-        mark:SetPoint("TOPLEFT", fs, "BOTTOMLEFT", 0, -2)
-    else
-        mark:SetPoint("LEFT", fs, "TOPLEFT", x, -fs:GetLineHeight() / 2)
-    end
+    mark:SetPoint("LEFT", fs, "TOPLEFT", fs:GetWrappedWidth() + 5, -fs:GetLineHeight() / 2)
 end
 
 -- A fixed anchor on a frame of the host's own (or the host itself):
@@ -134,6 +128,9 @@ function ns.Anchor(point, relativePoint, x, y)
     fixed[place] = true
     return place
 end
+
+-- On the top right corner of an icon, over its border.
+ns.OnIcon = ns.Anchor("TOPRIGHT", "TOPRIGHT", 4, 3)
 
 -------------------------------------------------------------------------------
 --  Places: each is a setting with on() and off(). One that lives in a
