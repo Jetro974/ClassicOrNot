@@ -1,0 +1,19 @@
+package-as: ClassicOrNot
+
+# The addon lives in ClassicOrNot/: its files move up to the package root.
+move-folders:
+  ClassicOrNot/ClassicOrNot: ClassicOrNot
+
+# Development files stay in the repository.
+ignore:
+  - Docs
+  - Tools
+  - Tests
+  - deploy.ps1
+  - TESTS.md
+  - CONTRIBUTING.md
+  - README.md
+
+manual-changelog:
+  filename: CHANGELOG.md
+  markup-type: markdown

@@ -1,0 +1,36 @@
+name: Check and release
+
+# Checks run on every push and pull request; a pushed tag (v0.1.0) also
+# packages the addon and uploads it (CurseForge once the TOC has its
+# X-Curse-Project-ID and the CF_API_KEY secret is set; a GitHub release).
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - name: Lua 5.1 syntax and offline tests
+        run: |
+          sudo apt-get install -y -qq lua5.1
+          find ClassicOrNot Tests -name '*.lua' -print0 | xargs -0 -n1 luac5.1 -p
+          lua5.1 Tests/test_data.lua
+
+  release:
+    needs: check
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    env:
+      CF_API_KEY: ${{ secrets.CF_API_KEY }}
+      WAGO_API_TOKEN: ${{ secrets.WAGO_API_TOKEN }}
+      GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+      - uses: BigWigsMods/packager@v2

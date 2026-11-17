@@ -4,7 +4,7 @@
 ## Notes: What's New in Forever: marks the quests, recipes, items, mounts, pets and toys that are not from the original game.
 ## Notes-frFR: Les nouveautés de Forever : marque les quêtes, recettes, objets, montures, mascottes et jouets qui ne viennent pas du jeu d'origine.
 ## Author: Jetro974
-## Version: 0.1.0
+## Version: @project-version@
 ## SavedVariables: ClassicOrNotDB
 ## OptionalDeps: EllesmereUI, EllesmereUIQuestTracker
 ## IconTexture: Interface\Icons\INV_Misc_Spyglass_03
