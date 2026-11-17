@@ -61,6 +61,7 @@ function ns.AskReload()
             text = ns.L.RELOAD, button1 = ns.L.RELOAD_NOW, button2 = ns.L.LATER,
             OnAccept = function() ReloadUI() end,
             timeout = 0, whileDead = true, hideOnEscape = true,
+            preferredIndex = 3, -- clear of the slots Blizzard's own popups use
         }
     end
     StaticPopup_Show("CLASSICORNOT_RELOAD")
