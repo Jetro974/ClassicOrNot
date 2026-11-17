@@ -51,11 +51,11 @@ ns.List({
 -------------------------------------------------------------------------------
 local MarkToy = ns.Marker(ns.ORIGINAL_ITEMS)
 local toyMarks = ns.Store()
-local OnToyIcon = ns.Anchor("TOPRIGHT", "TOPRIGHT", 4, 3)
 
 local toys = ns.Place({ key = "toys", addon = JOURNAL })
+-- After the toy's name (up to three lines, right of its icon).
 local function MarkToyButton(button)
-    MarkToy(toyMarks, button, true, button.itemID, OnToyIcon, button)
+    MarkToy(toyMarks, button, true, button.itemID, ns.AfterText, button.name)
 end
 
 local hooked = false

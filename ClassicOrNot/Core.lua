@@ -112,11 +112,11 @@ function ns.HideAll(store)
     for _, mark in pairs(store) do mark:Hide() end
 end
 
--- Right after the first line of a text.
+-- Right after the first line of a text (a wrapped text's widest line is
+-- usually its first).
 function ns.AfterText(mark, fs)
     mark:ClearAllPoints()
-    mark:SetPoint("LEFT", fs, "TOPLEFT", math.min(fs:GetUnboundedStringWidth(), fs:GetWidth()) + 3,
-        -fs:GetLineHeight() / 2)
+    mark:SetPoint("LEFT", fs, "TOPLEFT", fs:GetWrappedWidth() + 3, -fs:GetLineHeight() / 2)
 end
 
 -- A fixed anchor on a frame of the host's own (or the host itself):
