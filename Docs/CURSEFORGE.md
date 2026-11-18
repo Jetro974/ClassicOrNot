@@ -22,6 +22,7 @@ WoW Forever mixes the original game with a lot of new content. **Classic or Not*
 - **Recipes**: in your profession window and at profession trainers.
 - **Items**: a *New in Forever* line on the tooltip of every new item, in your bags, at vendors, in chat links. Gear, recipes, mount and pet items, toys: all of them.
 - **Collections**: new mounts in the mount journal, new pets in the pet journal, new toys in the toy box, new appearances in the wardrobe. Rather sort than spot? Mounts, pets and appearances get *All*, *New in Forever* and *Classic* in the game's own Filter menu.
+- **Library books**: a tab of its own in the collections journal. Which books are in your bags waiting to be handed in, which are still out there, which are done, with a counter and the reward steps. Click a book to pin its spot on your map.
 - **What you don't have yet**: Forever's journals only list the mounts and pets you own. One box shows the others too, greyed, along with the Filter button Forever hides.
 
 Every place can be turned off on its own. Type `/classicornot` or use the addon button on the minimap.

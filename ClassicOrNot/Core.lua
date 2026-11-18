@@ -25,6 +25,7 @@ ns.DEFAULTS = {
     window = true, trainer = true,      -- recipes
     tooltip = true,                     -- items
     mounts = true, pets = true, toys = true, appearances = true, -- collections
+    books = true,                       -- the Library books tab
     mountsFilter = true, petsFilter = true, appearancesFilter = true,
     mountsView = "all", petsView = "all", appearancesView = "all", -- the filters' choices
 }

@@ -1,5 +1,9 @@
 # Classic or Not
 
+## Unreleased
+
+- **Library books**: a new tab in the collections journal lists Forever's library books: to hand in (in your bags or bank), to find, and handed in, with a counter, the reward steps and where each book is. Click a book to pin its spot on the map.
+
 ## 0.1.0
 
 First release. A small blue infinity marks what is not from the original game:

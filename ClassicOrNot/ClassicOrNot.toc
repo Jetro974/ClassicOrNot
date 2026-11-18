@@ -1,8 +1,8 @@
 ## Interface: 16001
 ## AllowLoadGameType: camelot
 ## Title: Classic or Not
-## Notes: What's New in Forever: marks the quests, recipes, items, mounts, pets, toys and appearances that are not from the original game.
-## Notes-frFR: Les nouveautés de Forever : marque les quêtes, recettes, objets, montures, mascottes, jouets et apparences qui ne viennent pas du jeu d'origine.
+## Notes: What's New in Forever: marks the quests, recipes, items, mounts, pets, toys and appearances that are not from the original game, and tracks the library books.
+## Notes-frFR: Les nouveautés de Forever : marque les quêtes, recettes, objets, montures, mascottes, jouets et apparences qui ne viennent pas du jeu d'origine, et suit les livres de la bibliothèque.
 ## Author: Jetro974
 ## Version: @project-version@
 ## SavedVariables: ClassicOrNotDB
@@ -17,9 +17,11 @@ Data\Quests.lua
 Data\Recipes.lua
 Data\Items.lua
 Data\Collections.lua
+Data\Books.lua
 # The places.
 Quests.lua
 Recipes.lua
 Items.lua
 Collections.lua
+Books.lua
 Options.lua

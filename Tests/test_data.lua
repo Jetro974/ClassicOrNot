@@ -51,6 +51,26 @@ local cases = {
 for _, c in ipairs(cases) do
     check(ns.IsNew(ns[c[1]], c[2]) == c[3], c[1] .. " " .. c[2] .. (c[3] and " is new" or " is original"))
 end
+-- Library books: one item and one quest each, 36 for each faction.
+load("Data/Books.lua")
+local items, quests, sides = {}, {}, { Alliance = 0, Horde = 0 }
+for i, book in ipairs(ns.BOOKS) do
+    check(not items[book[1]], "book " .. i .. " has an item of its own")
+    check(not quests[book[2]], "book " .. i .. " has a quest of its own")
+    items[book[1]], quests[book[2]] = true, true
+    check(book[3] == nil or sides[book[3]] ~= nil, "book " .. i .. " is for both factions or one")
+    for side in pairs(sides) do
+        if book[3] == nil or book[3] == side then sides[side] = sides[side] + 1 end
+    end
+    for s = 4, #book, 3 do
+        check(type(book[s]) == "number" and book[s + 1] > 0 and book[s + 1] < 100 and book[s + 2] > 0 and book[s + 2] < 100,
+            "book " .. i .. " has a map and coordinates")
+    end
+    check(#book == 6 or #book == 9, "book " .. i .. " has one or two spots")
+end
+check(#ns.BOOKS == 39, "39 books")
+check(sides.Alliance == 36 and sides.Horde == 36, "36 books for each faction")
+
 check(not ns.IsNew(ns.ORIGINAL_ITEMS, nil), "no ID is not new")
 check(not ns.IsNew(ns.ORIGINAL_ITEMS, 0), "ID 0 is not new")
 
