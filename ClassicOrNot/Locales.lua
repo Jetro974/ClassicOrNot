@@ -27,7 +27,7 @@ local L = {
     merchant = "At merchants",
     merchant_TIP = "Marks new items in a merchant's list and buyback list.",
     purchases = "Purchases of the account's characters",
-    purchases_TIP = "Remembers what your characters buy from merchants for something other than gold (Merchant's Favor, tickets, tokens): a check on the merchant's list and \"Already bought by\" on the tooltip.",
+    purchases_TIP = "Remembers what your characters buy with Merchant's Favor: a check on the merchant's list and \"Already bought by\" on the tooltip. Purchases made before, or with this off, are not known.",
     BOUGHT_BY = "Already bought by: %s",
     missing = "Show what's missing",
     missing_TIP = "Also shows, greyed, the mounts and pets you lack, and the journals' Filter button the mount and pet filters need.",
@@ -93,7 +93,7 @@ if GetLocale() == "frFR" then
     L.merchant = "Chez les marchands"
     L.merchant_TIP = "Marque les objets nouveaux dans la liste d'un marchand et dans ses rachats."
     L.purchases = "Achats des personnages du compte"
-    L.purchases_TIP = "Retient ce que tes personnages achètent aux marchands pour autre chose que de l'or (Faveur du marchand, tickets, jetons) : une coche dans la liste du marchand et « Déjà acheté par » dans l'infobulle."
+    L.purchases_TIP = "Retient ce que tes personnages achètent avec la Faveur du marchand : une coche dans la liste du marchand et « Déjà acheté par » dans l'infobulle. Les achats d'avant, ou faits case décochée, ne sont pas connus."
     L.BOUGHT_BY = "Déjà acheté par : %s"
     L.missing = "Montrer ce qui manque"
     L.missing_TIP = "Montre aussi, en grisé, les montures et mascottes qui manquent, et le bouton Filtre des journaux dont les filtres des montures et des mascottes ont besoin."

@@ -1,21 +1,40 @@
 -------------------------------------------------------------------------------
 --  Purchases.lua
---  What the account's characters buy from merchants for something other than
---  gold alone (Merchant's Favor at the commission merchants, Darkmoon
---  tickets, tokens): kept for the whole account (ClassicOrNotDB.bought), shown
---  on the item's tooltip ("Already bought by") and as a check on the
---  merchant's list.
+--  What the account's characters buy with Merchant's Favor (the commission
+--  merchants' plans and rewards): kept for the whole account
+--  (ClassicOrNotDB.bought), shown on the item's tooltip ("Already bought by")
+--  and as a check on the merchant's list.
 --
---  A purchase counts once the item reaches the bags: a click the merchant
---  refuses (not enough currency, bags full) is not one. Purchases made before
---  the addon was installed are not known.
+--  A purchase counts once the item reaches the bags within a few seconds of
+--  the click: a click the merchant refuses (not enough Favor, bags full) is
+--  not one, and an item that comes later (mail, loot) is not mistaken for it.
+--  Purchases made before the addon was installed, or with the option off,
+--  are not known.
 -------------------------------------------------------------------------------
 local _, ns = ...
 local L = ns.L
 
+local FAVOR = 3402         -- Merchant's Favor (CurrencyTypes)
+local WAIT = 5            -- seconds for a bought item to reach the bags
 local me                  -- this character's GUID
-local pending = {}        -- item ID -> its count (bags and bank) before the click
+local pending = {}        -- item ID -> { count before the click, time of the click }
 local events = CreateFrame("Frame")
+
+-- Bags, bank, reagent bank and warband bank: moving the item between them
+-- is not a purchase.
+local function Count(id)
+    return C_Item.GetItemCount(id, true, false, true, true)
+end
+
+-- Whether the merchant's item at index costs Merchant's Favor (its cost
+-- links to the currency).
+local function CostsFavor(index)
+    for i = 1, GetMerchantItemCostInfo(index) or 0 do
+        local _, _, link = GetMerchantItemCostItem(index, i)
+        if link and tonumber(link:match("currency:(%d+)")) == FAVOR then return true end
+    end
+    return false
+end
 
 -- ClassicOrNotDB.bought[itemID] = { [GUID] = true };
 -- ClassicOrNotDB.chars[GUID] = { name = first name, class = class file }.
@@ -33,7 +52,7 @@ local function ByName(a, b) return a.name < b.name end
 local function Buyers(who)
     local chars, list = Store("chars"), {}
     for guid in pairs(who) do
-        if chars[guid] then list[#list + 1] = chars[guid] end
+        if chars[guid] and chars[guid].name then list[#list + 1] = chars[guid] end
     end
     table.sort(list, ByName)
     for i, char in ipairs(list) do
@@ -51,23 +70,25 @@ local MarkBought -- the merchant's list, below
 local tooltipPlace = ns.Place({ key = "purchases" })
 
 local function OnBuy(index)
-    if not tooltipPlace.state or not me then return end
-    -- Gold alone: not followed.
-    if (GetMerchantItemCostInfo(index) or 0) == 0 then return end
+    if not tooltipPlace.state or not me or not CostsFavor(index) then return end
     local id = GetMerchantItemID(index)
-    if type(id) ~= "number" then return end
-    if pending[id] == nil then pending[id] = C_Item.GetItemCount(id, true) end
+    if type(id) ~= "number" or issecretvalue(id) then return end
+    -- Each click starts again from what the bags hold now.
+    pending[id] = { Count(id), GetTime() }
     events:RegisterEvent("BAG_UPDATE_DELAYED")
 end
 
 local function OnBags()
-    local bought = Store("bought")
-    for id, before in pairs(pending) do
-        if C_Item.GetItemCount(id, true) > before then
+    local bought, now = Store("bought"), GetTime()
+    for id, click in pairs(pending) do
+        if Count(id) > click[1] then
             bought[id] = bought[id] or {}
             bought[id][me] = true
             pending[id] = nil
             if MerchantFrame:IsShown() then MarkBought() end
+        elseif now - click[2] > WAIT then
+            -- Refused, or never in the bags: forgotten.
+            pending[id] = nil
         end
     end
     if not next(pending) then events:UnregisterEvent("BAG_UPDATE_DELAYED") end
@@ -91,8 +112,9 @@ local function OnTooltip(tip, data)
     local id = data and data.id
     if type(id) ~= "number" or issecretvalue(id) then return end
     local who = ClassicOrNotDB.bought and ClassicOrNotDB.bought[id]
-    if who and next(who) then
-        tip:AddLine(format(L.BOUGHT_BY, Buyers(who)), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
+    local names = who and Buyers(who)
+    if names and names ~= "" then
+        tip:AddLine(format(L.BOUGHT_BY, names), NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
     end
 end
 
@@ -146,6 +168,7 @@ function MarkBought()
         if merchant and i <= MERCHANT_ITEMS_PER_PAGE then
             local index = (MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE + i
             if index <= GetMerchantNumItems() then id = GetMerchantItemID(index) end
+            if issecretvalue(id) then id = nil end
         end
         Check(button, id ~= nil and bought[id] ~= nil and next(bought[id]) ~= nil)
     end
