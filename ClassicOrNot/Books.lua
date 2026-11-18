@@ -85,15 +85,15 @@ local function Refresh()
     scroll:SetDataProvider(CreateDataProvider(rows), ScrollBoxConstants.RetainScrollPosition)
 end
 
--- Item names come from the server the first time: one refresh once all are in.
-local waiting = 0
+-- Item names come from the server the first time, once each (one that never
+-- comes must not hold back the others).
+local asked = {}
 local function LoadNames()
     for _, book in ipairs(ns.BOOKS) do
-        if not C_Item.GetItemNameByID(book[1]) then
-            waiting = waiting + 1
+        if not asked[book[1]] and not C_Item.GetItemNameByID(book[1]) then
+            asked[book[1]] = true
             Item:CreateFromItemID(book[1]):ContinueOnItemLoad(function()
-                waiting = waiting - 1
-                if waiting == 0 and page:IsShown() then Refresh() end
+                if page:IsShown() then Refresh() end
             end)
         end
     end
@@ -251,12 +251,18 @@ local function ShowPage()
     Refresh()
 end
 
--- When Blizzard sets a tab, and when the journal closes.
+-- When Blizzard sets a tab, when the journal closes, and when the setting is
+-- turned off: Blizzard's selected tab and title come back (the journal's
+-- OnShow redraws neither).
 local function HidePage()
     if not (page and page:IsShown()) then return end
     page:Hide()
     tab:SetChecked(false)
     events:UnregisterAllEvents()
+    local selected = CollectionsJournal_GetTab(CollectionsJournal)
+    local current = CollectionsJournal.TabContainer.Tabs[selected]
+    if current then current:SetChecked(true) end
+    CollectionsJournal:SetTitle(CollectionsJournal:GetPageTitleText(selected))
 end
 
 -------------------------------------------------------------------------------
