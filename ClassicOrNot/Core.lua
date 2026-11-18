@@ -24,7 +24,6 @@ ns.DEFAULTS = {
     givers = true, log = true,          -- quests
     window = true, trainer = true,      -- recipes
     tooltip = true, merchant = true,    -- items
-    purchases = true,                   -- the account's purchases
     mounts = true, pets = true, toys = true, appearances = true, -- collections
     books = true,                       -- the Library books tab
     booksBags = true, booksFind = true, booksDone = true, -- its Filter menu

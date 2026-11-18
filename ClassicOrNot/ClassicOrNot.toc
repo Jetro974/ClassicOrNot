@@ -16,7 +16,6 @@ Core.lua
 Data\Quests.lua
 Data\Recipes.lua
 Data\Items.lua
-Purchases.lua
 Data\Collections.lua
 Data\Books.lua
 # The places.
