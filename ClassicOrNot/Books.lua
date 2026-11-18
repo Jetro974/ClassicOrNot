@@ -182,7 +182,14 @@ end
 
 local function DrawPage()
     local first = (paging:GetCurrentPage() - 1) * PER_PAGE
-    for i = 1, PER_PAGE do DrawButton(buttons[i], shown[first + i]) end
+    for i = 1, PER_PAGE do
+        local b = buttons[i]
+        DrawButton(b, shown[first + i])
+        -- A tooltip open on a button now showing another book.
+        if GameTooltip:GetOwner() == b then
+            if b.book then ShowTip(b) else GameTooltip:Hide() end
+        end
+    end
 end
 
 local function Refresh()
@@ -259,6 +266,8 @@ end
 
 -- The toy box's Filter menu: one box per state, kept in ClassicOrNotDB.
 local function SetupFilter(dropdown)
+    -- The toy box's fixed width (the template sizes it to its text).
+    dropdown.resizeToText = false
     dropdown:SetWidth(90)
     local labels = { done = COLLECTED, bags = L.BOOKS_bags, find = NOT_COLLECTED }
     local function isShown(state) return ns.Get(SHOWN[state]) end
@@ -272,8 +281,10 @@ local function SetupFilter(dropdown)
     dropdown:SetIsDefaultCallback(function()
         return isShown("done") and isShown("bags") and isShown("find")
     end)
+    -- The reset button calls only this, not the update callback.
     dropdown:SetDefaultCallback(function()
         for _, key in pairs(SHOWN) do ClassicOrNotDB[key] = nil end
+        Refresh()
     end)
 end
 
@@ -309,7 +320,9 @@ local function BuildPage()
     search:SetPoint("TOPRIGHT", -107, -35)
     search:HookScript("OnTextChanged", function()
         if page:IsShown() then
-            paging:SetCurrentPage(1)
+            -- Back to page 1 without the page turn (sound, drawing the old list).
+            paging.currentPage = 1
+            paging:Update()
             Refresh()
         end
     end)
