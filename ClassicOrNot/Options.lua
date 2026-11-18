@@ -11,7 +11,7 @@ local L = ns.L
 local SECTIONS = {
     { L.QUESTS, "givers", "log" },
     { L.PROFESSIONS, "window", "trainer" },
-    { L.ITEMS, "tooltip", "merchant" },
+    { L.ITEMS, "tooltip", "merchant", "purchases" },
     { L.COLLECTIONS, "missing", "mounts", "pets", "appearances", "toys", "books", "booksNotes", "booksMap" },
 }
 
