@@ -36,6 +36,8 @@ local L = {
     toys_TIP = "Marks new toys in the toy box.",
     books = "Library books tab",
     books_TIP = "Adds a tab to the collections journal: the library books to hand in, to find and handed in, with where each one is.",
+    booksMap = "Books to find on the maps",
+    booksMap_TIP = "Shows the library books you still have to find on the world map and the minimap; a click pins the spot.",
     BOOKS = "Library books",
     BOOKS_COUNT = "Books handed in",
     BOOKS_bags = "To hand in",
@@ -86,6 +88,8 @@ if GetLocale() == "frFR" then
     L.toys_TIP = "Marque les jouets nouveaux dans le coffre à jouets."
     L.books = "Onglet Livres de la bibliothèque"
     L.books_TIP = "Ajoute un onglet au journal des collections : les livres de la bibliothèque à rendre, à trouver et remis, avec l'endroit de chacun."
+    L.booksMap = "Livres à trouver sur les cartes"
+    L.booksMap_TIP = "Montre les livres de la bibliothèque qu'il te reste à trouver sur la carte du monde et la minicarte ; un clic pose un repère."
     L.BOOKS = "Livres de la bibliothèque"
     L.BOOKS_COUNT = "Livres remis"
     L.BOOKS_bags = "À rendre"

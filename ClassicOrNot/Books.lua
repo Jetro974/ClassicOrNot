@@ -48,6 +48,17 @@ local function StateOf(book)
     return "find"
 end
 
+-- Shared with BookPins.lua.
+ns.BookZone, ns.BookState = ZoneName, StateOf
+
+-- The game's map pin on a spot (uiMapID, x and y in percent).
+function ns.PinSpot(map, x, y)
+    if not C_Map.CanSetUserWaypointOnMap(map) then return end
+    C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(map, x / 100, y / 100))
+    C_SuperTrack.SetSuperTrackedUserWaypoint(true)
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+end
+
 local RANK = { bags = 1, find = 2, done = 3 }
 local function ByStateThenPlace(a, b)
     local ra, rb = RANK[states[a]], RANK[states[b]]
@@ -75,10 +86,7 @@ local function Pin(button)
     if book[7] and C_Map.GetBestMapForUnit("player") == book[7] then
         map, x, y = book[7], book[8], book[9]
     end
-    if not C_Map.CanSetUserWaypointOnMap(map) then return end
-    C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(map, x / 100, y / 100))
-    C_SuperTrack.SetSuperTrackedUserWaypoint(true)
-    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+    ns.PinSpot(map, x, y)
 end
 
 local function ShowTip(button)

@@ -24,4 +24,5 @@ Recipes.lua
 Items.lua
 Collections.lua
 Books.lua
+BookPins.lua
 Options.lua

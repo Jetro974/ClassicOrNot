@@ -12,7 +12,7 @@ local SECTIONS = {
     { L.QUESTS, "givers", "log" },
     { L.PROFESSIONS, "window", "trainer" },
     { L.ITEMS, "tooltip" },
-    { L.COLLECTIONS, "missing", "mounts", "pets", "appearances", "toys", "books" },
+    { L.COLLECTIONS, "missing", "mounts", "pets", "appearances", "toys", "books", "booksMap" },
 }
 
 -- A collection with a filter has one menu for its two places, the mark
