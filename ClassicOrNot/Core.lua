@@ -23,10 +23,11 @@ ns.R, ns.G, ns.B = 0.30, 0.65, 1.00
 ns.DEFAULTS = {
     givers = true, log = true,          -- quests
     window = true, trainer = true,      -- recipes
-    tooltip = true,                     -- items
+    tooltip = true, merchant = true,    -- items
     mounts = true, pets = true, toys = true, appearances = true, -- collections
     books = true,                       -- the Library books tab
     booksBags = true, booksFind = true, booksDone = true, -- its Filter menu
+    booksNotes = true,                  -- book tooltip line, loot message
     booksMap = false,                   -- books to find on the maps (asked for)
     mountsFilter = true, petsFilter = true, appearancesFilter = true,
     mountsView = "all", petsView = "all", appearancesView = "all", -- the filters' choices

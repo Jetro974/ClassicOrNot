@@ -3,6 +3,8 @@
 ## Unreleased
 
 - **Library books**: a new tab in the collections journal, laid out like the toy box, shows Forever's library books: to hand in (in your bags or bank), to find, and handed in, with a counter, the reward steps, a search box, a Filter menu and where each book is. Click a book to pin its spot on the map.
+- **Merchants**: the mark on new items in a merchant's list and buyback list.
+- **Library books, tooltip and chat**: a book's tooltip says whether you still have to hand it in; a chat line when you loot one.
 - **Library books on the maps** (off by default): the books you still have to find on the world map and the minimap.
 
 ## 0.1.0

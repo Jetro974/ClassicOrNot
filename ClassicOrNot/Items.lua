@@ -1,9 +1,9 @@
 -------------------------------------------------------------------------------
 --  Items.lua
 --  A line on the tooltip of every item that is not from the original game
---  (Data/Items.lua): gear, recipes, mount and pet items, toys. The tooltip
---  hook is set the first time the place is on (hooks cannot be removed) and
---  returns at once while it is off.
+--  (Data/Items.lua): gear, recipes, mount and pet items, toys; and the mark
+--  on new items at merchants. Hooks are set the first time their place is
+--  on (hooks cannot be removed) and return at once while it is off.
 -------------------------------------------------------------------------------
 local _, ns = ...
 
@@ -31,3 +31,49 @@ tooltip.on = function()
     TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Toy, OnTooltip)
 end
 tooltip.off = function() end
+
+-------------------------------------------------------------------------------
+--  Merchants: the mark on new items, in the merchant's list, the buyback
+--  list and the last item sold. Both lists are redrawn by a global function
+--  of their own, which keeps nothing of the item on the button: the item is
+--  read from the merchant, as Blizzard reads it.
+-------------------------------------------------------------------------------
+local MarkItem = ns.Marker(ORIGINAL_ITEMS)
+local merchantMarks = ns.Store()
+-- Top right of the item's icon.
+local Corner = ns.Anchor("TOPRIGHT", "TOPRIGHT", 3, 3)
+
+local function ItemOfLink(link)
+    return link and C_Item.GetItemInfoInstant(link)
+end
+
+local function MarkMerchant()
+    local buyback = MerchantFrame.selectedTab ~= 1
+    for i = 1, buyback and BUYBACK_ITEMS_PER_PAGE or MERCHANT_ITEMS_PER_PAGE do
+        local button = _G["MerchantItem" .. i .. "ItemButton"]
+        local id
+        if buyback then
+            if i <= GetNumBuybackItems() then id = ItemOfLink(GetBuybackItemLink(i)) end
+        else
+            local index = (MerchantFrame.page - 1) * MERCHANT_ITEMS_PER_PAGE + i
+            if index <= GetMerchantNumItems() then id = GetMerchantItemID(index) end
+        end
+        MarkItem(merchantMarks, button, true, id, Corner, button)
+    end
+    local last = GetNumBuybackItems()
+    local lastButton = MerchantBuyBackItemItemButton
+    MarkItem(merchantMarks, lastButton, not buyback, last > 0 and ItemOfLink(GetBuybackItemLink(last)) or nil, Corner, lastButton)
+end
+
+ns.Page({
+    key = "merchant",
+    store = merchantMarks,
+    hook = function(redrawn)
+        hooksecurefunc("MerchantFrame_UpdateMerchantInfo", redrawn)
+        hooksecurefunc("MerchantFrame_UpdateBuybackInfo", redrawn)
+    end,
+    mark = MarkMerchant,
+    now = function()
+        if MerchantFrame:IsShown() then MarkMerchant() end
+    end,
+})
