@@ -37,6 +37,7 @@ local L = {
     books = "Library books tab",
     books_TIP = "Adds a tab to the collections journal: the library books to hand in, to find and handed in, with where each one is.",
     BOOKS = "Library books",
+    BOOKS_COUNT = "Books handed in",
     BOOKS_bags = "To hand in",
     BOOKS_find = "To find",
     BOOKS_done = "Handed in",
@@ -86,6 +87,7 @@ if GetLocale() == "frFR" then
     L.books = "Onglet Livres de la bibliothèque"
     L.books_TIP = "Ajoute un onglet au journal des collections : les livres de la bibliothèque à remettre, à trouver et remis, avec l'endroit de chacun."
     L.BOOKS = "Livres de la bibliothèque"
+    L.BOOKS_COUNT = "Livres remis"
     L.BOOKS_bags = "À remettre"
     L.BOOKS_find = "À trouver"
     L.BOOKS_done = "Remis"

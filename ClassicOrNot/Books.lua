@@ -1,27 +1,32 @@
 -------------------------------------------------------------------------------
 --  Books.lua
---  A Library books tab in the collections journal: Forever's library books
---  (Data/Books.lua), those to hand in (in the bags or the bank), those still
---  to find, those handed in (their quest done). A click on a book pins its
---  spot on the map.
+--  A Library books tab in the collections journal, laid out like the toy box:
+--  Forever's library books (Data/Books.lua), 18 to a page, to hand in (in the
+--  bags or the bank), to find, or handed in (their quest done), with the toy
+--  box's count, search box and Filter menu. A click on a book pins its spot
+--  on the map.
 --
 --  Forever's journal has its tabs down its right side. Ours is a frame of our
 --  own under the last of them, and its page a frame of ours over the
 --  journal's content: Blizzard's page stays shown beneath it and its tabs
---  keep working. Two writes, both undone by Blizzard's next tab change: the
---  journal's title, and its selected tab drawn unselected while ours is.
+--  keep working. Two writes, both undone when our page hides: the journal's
+--  title, and its selected tab drawn unselected while ours is.
 -------------------------------------------------------------------------------
 local _, ns = ...
 local L = ns.L
 
 local JOURNAL = "Blizzard_Collections"
 local ICON = "Interface\\Icons\\INV_Misc_Book_09"
-local ROW, HEADER = 34, 26
+local PER_PAGE = 18
 local STATES = { "bags", "find", "done" }
-local COLORS = { bags = GREEN_FONT_COLOR, find = NORMAL_FONT_COLOR, done = GRAY_FONT_COLOR }
+-- The Filter menu's boxes, one per state.
+local SHOWN = { bags = "booksBags", find = "booksFind", done = "booksDone" }
 local EVENTS = { "QUEST_TURNED_IN", "BAG_UPDATE_DELAYED", "PLAYERBANKSLOTS_CHANGED" }
 
-local tab, page, scroll, bar
+local tab, page, front, count, search, paging
+local buttons = {}
+local shown = {}           -- the books the filters and search keep, in order
+local states = {}          -- book -> state, at the last refresh
 local handedIn, total = 0, 0
 local events = CreateFrame("Frame")
 
@@ -43,46 +48,161 @@ local function StateOf(book)
     return "find"
 end
 
-local function ByPlace(a, b)
+local RANK = { bags = 1, find = 2, done = 3 }
+local function ByStateThenPlace(a, b)
+    local ra, rb = RANK[states[a]], RANK[states[b]]
+    if ra ~= rb then return ra < rb end
     local za, zb = ZoneName(a[4]), ZoneName(b[4])
     if za ~= zb then return za < zb end
     return a[1] < b[1]
 end
 
--- A book's spots: "Zone 56.3, 8.8", and its second one if it has one.
-local function PlaceText(book)
-    local text = format("%s %.1f, %.1f", ZoneName(book[4]), book[5], book[6])
-    if book[7] then
-        text = format("%s / %s %.1f, %.1f", text, ZoneName(book[7]), book[8], book[9])
+-- The search box's text in a book's name or zone (plain text, any case).
+local function Matches(book, text)
+    if text == "" then return true end
+    local name = C_Item.GetItemNameByID(book[1]) or ""
+    return name:lower():find(text, 1, true) or ZoneName(book[4]):lower():find(text, 1, true)
+end
+
+-------------------------------------------------------------------------------
+--  Buttons: the toy box's look (CollectionsSpellButtonTemplate's textures),
+--  on plain buttons of our own (that template is secure).
+-------------------------------------------------------------------------------
+local function Pin(button)
+    local book = button.book
+    local map, x, y = book[4], book[5], book[6]
+    -- A book found in two places: the spot in the player's zone, if any.
+    if book[7] and C_Map.GetBestMapForUnit("player") == book[7] then
+        map, x, y = book[7], book[8], book[9]
     end
-    return text
+    if not C_Map.CanSetUserWaypointOnMap(map) then return end
+    C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(map, x / 100, y / 100))
+    C_SuperTrack.SetSuperTrackedUserWaypoint(true)
+    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+end
+
+local function ShowTip(button)
+    local book = button.book
+    GameTooltip:SetOwner(button, "ANCHOR_RIGHT")
+    GameTooltip:SetItemByID(book[1])
+    GameTooltip:AddLine(" ")
+    GameTooltip:AddLine(L["BOOKS_" .. states[book]], HIGHLIGHT_FONT_COLOR:GetRGB())
+    for s = 4, #book, 3 do
+        GameTooltip:AddLine(format("%s %.1f, %.1f", ZoneName(book[s]), book[s + 1], book[s + 2]), HIGHLIGHT_FONT_COLOR:GetRGB())
+    end
+    GameTooltip:AddLine(L.BOOKS_PIN, GREEN_FONT_COLOR:GetRGB())
+    GameTooltip:Show()
+end
+
+local function Texture(button, layer, sub, width, height, y)
+    local t = button:CreateTexture(nil, layer, nil, sub)
+    t:SetSize(width, height)
+    t:SetPoint("CENTER", 0, y)
+    return t
+end
+
+local function NewButton(parent, i)
+    local b = CreateFrame("Button", nil, parent)
+    b:SetSize(50, 50)
+    if i == 1 then
+        b:SetPoint("TOPLEFT", 40, -53)
+    elseif i % 3 == 1 then
+        b:SetPoint("TOPLEFT", buttons[i - 3], "BOTTOMLEFT", 0, -16)
+    else
+        b:SetPoint("TOPLEFT", buttons[i - 1], "TOPLEFT", 208, 0)
+    end
+    b.icon = Texture(b, "ARTWORK", 0, 42, 42, 1)
+    b.icon:SetTexCoord(0.04347826, 0.95652173, 0.04347826, 0.95652173)
+    b.iconUncollected = Texture(b, "ARTWORK", 0, 42, 41, 2)
+    b.iconUncollected:SetTexCoord(0.063, 0.938, 0.063, 0.917)
+    b.iconUncollected:SetAlpha(0.18)
+    b.iconUncollected:SetDesaturated(true)
+    b.innerGlow = Texture(b, "ARTWORK", 0, 50, 50, 2)
+    b.innerGlow:SetAtlas("collections-itemborder-uncollected-innerglow", true)
+    b.innerGlow:SetAlpha(0.18)
+    b.frameCollected = Texture(b, "OVERLAY", 1, 56, 56, 0)
+    b.frameCollected:SetAtlas("collections-itemborder-collected")
+    b.frameUncollected = Texture(b, "OVERLAY", 1, 50, 50, 2)
+    b.frameUncollected:SetAtlas("collections-itemborder-uncollected")
+    -- To hand in: the quest giver's yellow "?" (a quest to hand in), where a
+    -- toy shows its favourite star.
+    b.handIn = b:CreateTexture(nil, "OVERLAY", nil, 2)
+    b.handIn:SetTexture("Interface\\GossipFrame\\ActiveQuestIcon")
+    b.handIn:SetSize(20, 20)
+    b.handIn:SetPoint("TOPLEFT", -6, 7)
+    b.name = b:CreateFontString(nil, "ARTWORK", "GameFontNormal")
+    b.name:SetSize(135, 0)
+    b.name:SetMaxLines(3)
+    b.name:SetJustifyH("LEFT")
+    b.name:SetPoint("LEFT", b, "RIGHT", 9, 3)
+    b:SetPushedTexture("Interface\\Buttons\\UI-Quickslot-Depress")
+    b:GetPushedTexture():SetSize(42, 42)
+    b:GetPushedTexture():ClearAllPoints()
+    b:GetPushedTexture():SetPoint("CENTER", 0, 1)
+    b:SetHighlightTexture("Interface\\Buttons\\ButtonHilight-Square", "ADD")
+    b:GetHighlightTexture():SetSize(48, 48)
+    b:GetHighlightTexture():ClearAllPoints()
+    b:GetHighlightTexture():SetPoint("CENTER", 0, 2)
+    b:SetScript("OnClick", Pin)
+    b:SetScript("OnEnter", ShowTip)
+    b:SetScript("OnLeave", GameTooltip_Hide)
+    return b
+end
+
+-- As the toy box draws a toy it has (gold name) or lacks (faded, brown name);
+-- a book to hand in is drawn had, with a white name and the turn-in mark.
+local function DrawButton(b, book)
+    b.book = book
+    if not book then return b:Hide() end
+    local state = states[book]
+    local had = state ~= "find"
+    local texture = C_Item.GetItemIconByID(book[1])
+    b.icon:SetTexture(texture)
+    b.iconUncollected:SetTexture(texture)
+    b.icon:SetShown(had)
+    b.frameCollected:SetShown(had)
+    b.iconUncollected:SetShown(not had)
+    b.frameUncollected:SetShown(not had)
+    b.innerGlow:SetShown(not had)
+    b.handIn:SetShown(state == "bags")
+    b.name:SetText(C_Item.GetItemNameByID(book[1]) or "")
+    if state == "find" then
+        b.name:SetTextColor(0.33, 0.27, 0.20, 1)
+        b.name:SetShadowColor(0, 0, 0, 0.33)
+    else
+        if state == "bags" then
+            b.name:SetTextColor(HIGHLIGHT_FONT_COLOR:GetRGB())
+        else
+            b.name:SetTextColor(1, 0.82, 0, 1)
+        end
+        b.name:SetShadowColor(0, 0, 0, 1)
+    end
+    b:Show()
+end
+
+local function DrawPage()
+    local first = (paging:GetCurrentPage() - 1) * PER_PAGE
+    for i = 1, PER_PAGE do DrawButton(buttons[i], shown[first + i]) end
 end
 
 local function Refresh()
     local side = UnitFactionGroup("player")
-    local groups = { bags = {}, find = {}, done = {} }
-    total = 0
+    local text = search:GetText():lower()
+    wipe(shown)
+    handedIn, total = 0, 0
     for _, book in ipairs(ns.BOOKS) do
         if not book[3] or book[3] == side then
+            local state = StateOf(book)
+            states[book] = state
             total = total + 1
-            local list = groups[StateOf(book)]
-            list[#list + 1] = book
+            if state == "done" then handedIn = handedIn + 1 end
+            if ns.Get(SHOWN[state]) and Matches(book, text) then shown[#shown + 1] = book end
         end
     end
-    local rows = {}
-    for _, state in ipairs(STATES) do
-        local list = groups[state]
-        if #list > 0 then
-            table.sort(list, ByPlace)
-            rows[#rows + 1] = { header = L["BOOKS_" .. state], count = #list }
-            for _, book in ipairs(list) do rows[#rows + 1] = { book = book, state = state } end
-        end
-    end
-    handedIn = #groups.done
-    bar:SetMinMaxValues(0, total)
-    bar:SetValue(handedIn)
-    bar.text:SetFormattedText("%d/%d", handedIn, total)
-    scroll:SetDataProvider(CreateDataProvider(rows), ScrollBoxConstants.RetainScrollPosition)
+    table.sort(shown, ByStateThenPlace)
+    count.Count:SetFormattedText("%d/%d", handedIn, total)
+    paging:SetMaxPages(math.ceil(#shown / PER_PAGE))
+    DrawPage()
 end
 
 -- Item names come from the server the first time, once each (one that never
@@ -97,66 +217,6 @@ local function LoadNames()
             end)
         end
     end
-end
-
--------------------------------------------------------------------------------
---  Rows
--------------------------------------------------------------------------------
--- The spot in the player's zone, else the first one.
-local function Pin(row)
-    local book = row.book
-    local map, x, y = book[4], book[5], book[6]
-    if book[7] and C_Map.GetBestMapForUnit("player") == book[7] then
-        map, x, y = book[7], book[8], book[9]
-    end
-    if not C_Map.CanSetUserWaypointOnMap(map) then return end
-    C_Map.SetUserWaypoint(UiMapPoint.CreateFromCoordinates(map, x / 100, y / 100))
-    C_SuperTrack.SetSuperTrackedUserWaypoint(true)
-    PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-end
-
-local function ShowTip(row)
-    GameTooltip:SetOwner(row, "ANCHOR_RIGHT")
-    GameTooltip:SetItemByID(row.book[1])
-    GameTooltip:AddLine(L.BOOKS_PIN, GREEN_FONT_COLOR:GetRGB())
-    GameTooltip:Show()
-end
-
-local function BuildRow(row)
-    row.Icon = row:CreateTexture(nil, "ARTWORK")
-    row.Icon:SetSize(28, 28)
-    row.Icon:SetPoint("LEFT", 6, 0)
-    row.Name = row:CreateFontString(nil, "ARTWORK", "GameFontNormal")
-    row.Name:SetPoint("TOPLEFT", row.Icon, "TOPRIGHT", 8, -1)
-    row.Name:SetPoint("RIGHT", -8, 0)
-    row.Name:SetJustifyH("LEFT")
-    row.Place = row:CreateFontString(nil, "ARTWORK", "GameFontHighlightSmall")
-    row.Place:SetPoint("BOTTOMLEFT", row.Icon, "BOTTOMRIGHT", 8, 1)
-    row.Place:SetPoint("RIGHT", -8, 0)
-    row.Place:SetJustifyH("LEFT")
-    row:SetHighlightTexture("Interface\\QuestFrame\\UI-QuestTitleHighlight", "ADD")
-    row:SetScript("OnClick", Pin)
-    row:SetScript("OnEnter", ShowTip)
-    row:SetScript("OnLeave", GameTooltip_Hide)
-end
-
-local function InitRow(row, data)
-    if not row.Icon then BuildRow(row) end
-    local book = data.book
-    row.book = book
-    row.Icon:SetTexture(C_Item.GetItemIconByID(book[1]))
-    row.Icon:SetDesaturated(data.state == "find")
-    row.Name:SetText(C_Item.GetItemNameByID(book[1]) or "")
-    row.Name:SetTextColor(COLORS[data.state]:GetRGB())
-    row.Place:SetText(PlaceText(book))
-end
-
-local function InitHeader(frame, data)
-    if not frame.Text then
-        frame.Text = frame:CreateFontString(nil, "ARTWORK", "GameFontNormalMed2")
-        frame.Text:SetPoint("BOTTOMLEFT", 8, 4)
-    end
-    frame.Text:SetFormattedText("%s (%d)", data.header, data.count)
 end
 
 -------------------------------------------------------------------------------
@@ -184,7 +244,6 @@ local function Cover(left, top, corner, right, bottom)
         fill:SetAllPoints(clip)
         bg:SetColorTexture(0.05, 0.05, 0.05)
     end
-    return clip
 end
 
 local function ShowRewards(self)
@@ -196,6 +255,26 @@ local function ShowRewards(self)
     end
     GameTooltip:AddLine(L.BOOKS_HANDIN, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, true)
     GameTooltip:Show()
+end
+
+-- The toy box's Filter menu: one box per state, kept in ClassicOrNotDB.
+local function SetupFilter(dropdown)
+    dropdown:SetWidth(90)
+    local labels = { done = COLLECTED, bags = L.BOOKS_bags, find = NOT_COLLECTED }
+    local function isShown(state) return ns.Get(SHOWN[state]) end
+    local function toggle(state) ClassicOrNotDB[SHOWN[state]] = not ns.Get(SHOWN[state]) end
+    dropdown:SetupMenu(function(_, root)
+        for _, state in ipairs({ "done", "bags", "find" }) do
+            root:CreateCheckbox(labels[state], isShown, toggle, state)
+        end
+    end)
+    dropdown:SetUpdateCallback(Refresh)
+    dropdown:SetIsDefaultCallback(function()
+        return isShown("done") and isShown("bags") and isShown("find")
+    end)
+    dropdown:SetDefaultCallback(function()
+        for _, key in pairs(SHOWN) do ClassicOrNotDB[key] = nil end
+    end)
 end
 
 local function BuildPage()
@@ -210,31 +289,47 @@ local function BuildPage()
     Cover(58, -23, "TOPRIGHT", -3, -58)
     Cover(3, -58, "BOTTOMRIGHT", -3, 3)
 
-    bar = CreateFrame("StatusBar", nil, page, "CollectionsProgressBarTemplate")
-    bar:ClearAllPoints()
-    bar:SetPoint("TOP", page, "TOP", 0, -39)
-    bar:SetFrameLevel(page:GetFrameLevel() + 5)
-    bar:EnableMouse(true)
-    bar:SetScript("OnEnter", ShowRewards)
-    bar:SetScript("OnLeave", GameTooltip_Hide)
+    -- Everything else above the covers.
+    front = CreateFrame("Frame", nil, page)
+    front:SetAllPoints()
+    front:SetFrameLevel(page:GetFrameLevel() + 5)
 
-    local inset = CreateFrame("Frame", nil, page, "InsetFrameTemplate")
-    inset:SetPoint("TOPLEFT", 4, -60)
-    inset:SetPoint("BOTTOMRIGHT", -6, 5)
-    inset:SetFrameLevel(page:GetFrameLevel() + 5)
+    -- As the toy box, at the same places.
+    count = CreateFrame("Frame", nil, front, "CollectionsCountTemplate")
+    count:ClearAllPoints()
+    count:SetPoint("TOPLEFT", 70, -35)
+    count.Label:SetText(L.BOOKS_COUNT)
+    count:EnableMouse(true)
+    count:SetScript("OnEnter", ShowRewards)
+    count:SetScript("OnLeave", GameTooltip_Hide)
 
-    scroll = CreateFrame("Frame", nil, inset, "WowScrollBoxList")
-    scroll:SetPoint("TOPLEFT", 4, -4)
-    scroll:SetPoint("BOTTOMRIGHT", -24, 4)
-    local scrollBar = CreateFrame("EventFrame", nil, inset, "MinimalScrollBar")
-    scrollBar:SetPoint("TOPLEFT", scroll, "TOPRIGHT", 8, 0)
-    scrollBar:SetPoint("BOTTOMLEFT", scroll, "BOTTOMRIGHT", 8, 0)
-    local view = CreateScrollBoxListLinearView()
-    view:SetElementExtentCalculator(function(_, data) return data.header and HEADER or ROW end)
-    view:SetElementFactory(function(factory, data)
-        if data.header then factory("Frame", InitHeader) else factory("Button", InitRow) end
+    search = CreateFrame("EditBox", nil, front, "SearchBoxTemplate")
+    search:SetSize(115, 20)
+    search:SetMaxLetters(40)
+    search:SetPoint("TOPRIGHT", -107, -35)
+    search:HookScript("OnTextChanged", function()
+        if page:IsShown() then
+            paging:SetCurrentPage(1)
+            Refresh()
+        end
     end)
-    ScrollUtil.InitScrollBoxListWithScrollBar(scroll, scrollBar, view)
+
+    local filter = CreateFrame("DropdownButton", nil, front, "WowStyle1FilterDropdownTemplate")
+    filter:SetPoint("TOPRIGHT", -12, -35)
+    SetupFilter(filter)
+
+    local icons = CreateFrame("Frame", nil, front, "CollectionsBackgroundTemplate")
+    icons:EnableMouseWheel(true)
+    icons:SetScript("OnMouseWheel", function(_, delta) paging:OnMouseWheel(delta) end)
+    for i = 1, PER_PAGE do buttons[i] = NewButton(icons, i) end
+
+    paging = CreateFrame("Frame", nil, front, "CollectionsPagingFrameTemplate")
+    paging:SetPoint("BOTTOM", 21, 43)
+    -- The paging frame calls its parent's OnPageChanged.
+    front.OnPageChanged = function()
+        PlaySound(SOUNDKIT.IG_ABILITY_PAGE_TURN)
+        DrawPage()
+    end
 
     events:SetScript("OnEvent", function() Refresh() end)
 end
