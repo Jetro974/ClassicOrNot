@@ -55,6 +55,9 @@ local function NewPin(parent, size)
     pin:SetScript("OnEnter", ShowTip)
     pin:SetScript("OnLeave", GameTooltip_Hide)
     pin:SetScript("OnClick", PinSpot)
+    -- Right-click stays the map's (back to the parent map, the minimap's
+    -- tracking menu), as on Blizzard's own pins.
+    pin:SetPassThroughButtons("RightButton")
     return pin
 end
 
@@ -162,7 +165,11 @@ end
 ns.Place({
     key = "booksMap",
     addon = "Blizzard_WorldMap",
-    on = function() WorldMapFrame:AddDataProvider(provider) end,
+    on = function()
+        WorldMapFrame:AddDataProvider(provider)
+        -- The map refreshes its providers only when shown or changed.
+        if WorldMapFrame:IsShown() then provider:RefreshAllData() end
+    end,
     off = function() WorldMapFrame:RemoveDataProvider(provider) end,
 })
 
