@@ -17,15 +17,23 @@ local notes = ns.Place({ key = "booksNotes" })
 -------------------------------------------------------------------------------
 local function OnTooltip(tip, data)
     if not notes.state or (tip ~= GameTooltip and tip ~= ItemRefTooltip) then return end
+    -- The Library books tab's buttons say the book's state themselves.
+    local owner = tip:GetOwner()
+    if owner and owner.book then return end
     local id = data and data.id
     if type(id) ~= "number" or issecretvalue(id) or not byItem[id] then return end
     local book = byItem[id]
     if book[3] and book[3] ~= UnitFactionGroup("player") then
         tip:AddLine(L.BOOK_OTHER, GRAY_FONT_COLOR:GetRGB())
-    elseif ns.BookState(book) == "done" then
-        tip:AddLine(L.BOOK_DONE, GRAY_FONT_COLOR:GetRGB())
     else
-        tip:AddLine(L.BOOK_TODO, GREEN_FONT_COLOR:GetRGB())
+        local state = ns.BookState(book)
+        if state == "done" then
+            tip:AddLine(L.BOOK_DONE, GRAY_FONT_COLOR:GetRGB())
+        elseif state == "bags" then
+            tip:AddLine(L.BOOK_TODO, GREEN_FONT_COLOR:GetRGB())
+        else
+            tip:AddLine(L.BOOK_FIND, HIGHLIGHT_FONT_COLOR:GetRGB())
+        end
     end
 end
 
@@ -60,13 +68,19 @@ local function Scan(quiet)
         if new.handedIn then
             Say(format(L.BOOK_AGAIN, link))
         else
-            Say(format(L.BOOK_FOUND, link, L["LIBRARIAN_" .. (side or "Alliance")], done, total))
+            Say(format(L.BOOK_FOUND, link, L["LIBRARIAN_" .. tostring(side)] or L.LIBRARIAN_Alliance, done, total))
         end
     end
 end
 
+-- The first bag update after the box is ticked (at login, the bags may
+-- still be filling) only takes stock.
+local ready = false
 local events = CreateFrame("Frame")
-events:SetScript("OnEvent", function() Scan(false) end)
+events:SetScript("OnEvent", function()
+    Scan(not ready)
+    ready = true
+end)
 
 local hooked = false
 notes.on = function()
@@ -77,6 +91,7 @@ notes.on = function()
     -- What the bags hold now is not news.
     wipe(inBags)
     Scan(true)
+    ready = false
     events:RegisterEvent("BAG_UPDATE_DELAYED")
 end
 notes.off = function()

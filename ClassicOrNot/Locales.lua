@@ -44,6 +44,7 @@ local L = {
     booksNotes_TIP = "On a library book's tooltip, whether you still have to hand it in; and a chat line when you loot one.",
     BOOK_TODO = "Library book: to hand in",
     BOOK_DONE = "Library book: already handed in",
+    BOOK_FIND = "Library book: not handed in yet",
     BOOK_OTHER = "Library book: for the other faction",
     BOOK_FOUND = "library book found: %s. Hand it in to %s (%d/%d).",
     BOOK_AGAIN = "library book already handed in: %s.",
@@ -107,6 +108,7 @@ if GetLocale() == "frFR" then
     L.booksNotes_TIP = "Dit dans l'infobulle d'un livre de la bibliothèque s'il te reste à le rendre, et écrit une ligne dans le chat quand tu en ramasses un."
     L.BOOK_TODO = "Livre de la bibliothèque : à rendre"
     L.BOOK_DONE = "Livre de la bibliothèque : déjà remis"
+    L.BOOK_FIND = "Livre de la bibliothèque : pas encore remis"
     L.BOOK_OTHER = "Livre de la bibliothèque : pour l'autre faction"
     L.BOOK_FOUND = "livre trouvé : %s. À rendre à %s (%d/%d)."
     L.BOOK_AGAIN = "livre déjà remis : %s."
