@@ -2,9 +2,20 @@
 --  Options.lua
 --  One page of switches, by section, in the game's options (Options >
 --  AddOns), opened by /classicornot and the addon compartment.
+--
+--  The addon is one of the "... or Not" family. With another of them
+--  installed, the game's options get a single entry, "Or Not", holding a
+--  page for each; alone, the page is the addon's own entry.
 -------------------------------------------------------------------------------
 local ADDON, ns = ...
 local L = ns.L
+
+-- The family's shared table: each of its addons counts itself here when it
+-- loads, and the pages are built at login, when the count is final.
+local SUITE = "Or Not"
+OrNotFamily = OrNotFamily or { count = 0, built = 0 }
+OrNotFamily[ADDON] = true
+OrNotFamily.count = OrNotFamily.count + 1
 
 -- Each section: its title, then its rows. A row's label is L[key], its
 -- tooltip L[key .. "_TIP"].
@@ -66,10 +77,28 @@ end
 
 -- At login (Core.lua), before the places apply.
 function ns.BuildOptions()
-    local layout
-    category, layout = Settings.RegisterVerticalLayoutCategory(L.NAME)
+    local family, layout = OrNotFamily, nil
+    local grouped = family.count > 1
+    if grouped then
+        if not family.category then
+            family.category, family.layout = Settings.RegisterVerticalLayoutCategory(SUITE)
+        end
+        category, layout = Settings.RegisterVerticalLayoutSubcategory(family.category, L.NAME)
+    else
+        category, layout = Settings.RegisterVerticalLayoutCategory(L.NAME)
+    end
     for _, section in ipairs(SECTIONS) do AddSection(layout, section) end
-    Settings.RegisterAddOnCategory(category)
+    if grouped then
+        -- The entry's own page: a line for each addon, with a button to its page.
+        family.layout:AddInitializer(CreateSettingsButtonInitializer(L.NAME, L.OPEN, ns.OpenOptions,
+            C_AddOns.GetAddOnMetadata(ADDON, "Notes"), false))
+        -- Registered once every page is in: the game reads an entry's pages
+        -- when the entry is registered.
+        family.built = family.built + 1
+        if family.built == family.count then Settings.RegisterAddOnCategory(family.category) end
+    else
+        Settings.RegisterAddOnCategory(category)
+    end
 end
 
 function ns.OpenOptions()

@@ -46,6 +46,7 @@ local L = {
     RELOAD = "This change takes effect at the next reload. Reload the interface now?",
     RELOAD_NOW = "Reload",
     LATER = "Later",
+    OPEN = "Open", -- the button to the addon's page, on the "Or Not" entry's page
 }
 
 if GetLocale() == "frFR" then
@@ -86,6 +87,7 @@ if GetLocale() == "frFR" then
     L.RELOAD = "Ce changement prend effet au prochain rechargement. Recharger l'interface maintenant ?"
     L.RELOAD_NOW = "Recharger"
     L.LATER = "Plus tard"
+    L.OPEN = "Ouvrir"
 end
 
 ns.L = L

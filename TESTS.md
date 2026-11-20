@@ -16,4 +16,6 @@ Installer : `powershell -ExecutionPolicy Bypass -File C:\Dev\Addons\ClassicOrNot
 
 11. **Marchands** : chez un marchand de Forever, l'infini en haut à droite de l'icône des objets nouveaux, rien sur un objet d'origine ; changer de page, onglet Rachats, vendre un objet nouveau (il apparaît en bas comme dernier vendu, marqué) : les marques suivent. Acheter, vendre, racheter : marchent toujours. Options > Objets > « Chez les marchands » décochée : les marques partent.
 
+12. **Suite « Or Not »** : seul, l'addon garde son entrée « Classic or Not » dans Options > AddOns. Avec un autre addon de la famille installé : une seule entrée « Or Not », qui se déplie en une page par addon ; la page « Or Not » elle-même montre une ligne par addon, sa description au survol et un bouton « Ouvrir » qui mène à sa page ; `/classicornot` et le bouton du compartiment ouvrent toujours notre page ; les cases et menus marchent comme avant.
+
 Noté : ______ (date, build, ce qui ne va pas).
